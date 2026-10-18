@@ -1,0 +1,67 @@
+<UserControl x:Class="MediaOrganizer.App.Controls.NumberInput"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root">
+    <!-- Rahmen und Farben wie ein TextBox-Feld, damit sich das Ganze in die
+         übrigen Eingaben einfügt; die Schrittknöpfe sitzen INNERHALB des
+         Rahmens, wie bei den Zahlenfeldern von Windows selbst. -->
+    <!-- MinWidth statt Width: Mehrere Felder stehen dadurch weiterhin bündig,
+         aber eine längere Einheit ("Tage" statt "km") quetscht die Zahl nicht
+         mehr auf wenige Pixel zusammen — dann war nur noch ein Strich zu sehen. -->
+    <Border x:Name="Shell" MinWidth="88"
+            Background="{DynamicResource ControlFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+            BorderThickness="1" CornerRadius="4"
+            SnapsToDevicePixels="True">
+        <!-- Feste Breite, damit mehrere Felder untereinander bündig stehen.
+             Zahl, Einheit und Knöpfe liegen in EIGENEN Spalten — überlagert
+             man Zahl und Einheit, laufen sie bei größeren Werten ineinander
+             ("km10"). -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- MinWidth, damit eine lange Einheit die Zahl nicht auf einen
+                 Strich zusammendrückt: Die Spalte ist "*", und ohne
+                 Mindestbreite bekommt sie nur, was Einheit und Knöpfe übrig
+                 lassen. -->
+            <TextBox x:Name="Entry" Grid.Column="0" MinWidth="42"
+                     BorderThickness="0" Background="Transparent"
+                     Padding="4,3,0,3"
+                     HorizontalContentAlignment="Right"
+                     VerticalContentAlignment="Center"
+                     IsEnabled="{Binding IsEnabled, ElementName=Root}"
+                     LostFocus="Entry_LostFocus"
+                     PreviewKeyDown="Entry_PreviewKeyDown" />
+
+            <TextBlock Grid.Column="1" x:Name="UnitText"
+                       Margin="3,0,4,0" VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                       FontSize="12"
+                       Text="{Binding Unit, ElementName=Root}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <!-- Ohne Einheit auch keinen Platz beanspruchen. -->
+                            <DataTrigger Binding="{Binding Unit, ElementName=Root}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <StackPanel Grid.Column="2" Margin="0,1,1,1">
+                <RepeatButton x:Name="UpButton" Style="{StaticResource SpinnerButton}"
+                              Content="&#xE70E;" Click="Up_Click"
+                              IsEnabled="{Binding IsEnabled, ElementName=Root}" />
+                <RepeatButton x:Name="DownButton" Style="{StaticResource SpinnerButton}"
+                              Content="&#xE70D;" Click="Down_Click"
+                              IsEnabled="{Binding IsEnabled, ElementName=Root}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

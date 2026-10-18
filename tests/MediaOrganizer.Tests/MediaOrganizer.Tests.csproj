@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MediaOrganizer.Core\MediaOrganizer.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The interface dictionaries are copied in rather than reached through a
+         project reference: MediaOrganizer.App targets net10.0-windows and needs
+         WPF, which would drag the whole desktop stack into a plain test run.
+         They are parsed as XML, and that needs nothing. -->
+    <None Include="..\..\src\MediaOrganizer.App\Localization\UiStrings.*.xaml"
+          Link="Localization\%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

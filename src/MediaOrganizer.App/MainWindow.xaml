@@ -1,0 +1,1618 @@
+<Window x:Class="MediaOrganizer.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:MediaOrganizer.App.ViewModels"
+        xmlns:ctl="clr-namespace:MediaOrganizer.App.Controls"
+        xmlns:conv="clr-namespace:MediaOrganizer.App.Converters"
+        xmlns:views="clr-namespace:MediaOrganizer.App.Views"
+        Title="Media Organizer"
+        Icon="pack://application:,,,/Assets/app.ico"
+        Width="1260" Height="820"
+        MinWidth="1000" MinHeight="640"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <conv:ObjectToVisibilityConverter x:Key="VisibleIfNotNull" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <conv:InverseBooleanConverter x:Key="InverseBool" />
+        <conv:InverseBooleanToVisibilityConverter x:Key="CollapsedIfTrue" />
+
+        <!-- Zoom der Vorschaukacheln. Als Vorlage abgelegt, weil derselbe
+             Regler in Ist-Zustand, Plan und Ergebnis auftaucht und überall
+             auf dieselbe Eigenschaft wirkt. -->
+        <DataTemplate x:Key="ThumbnailZoom">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                        ToolTip="{DynamicResource S.Thumb.ZoomTip}">
+                <TextBlock Style="{StaticResource Glyph}" FontSize="12" Margin="0,0,8,0"
+                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                           Text="&#xE8B9;" />
+                <!-- Umgekehrte Richtung: rechts heißt größer, also weniger
+                     Kacheln je Reihe. Ein Regler, der beim Ziehen nach rechts
+                     kleiner macht, liest sich falsch. -->
+                <Slider Width="130" VerticalAlignment="Center"
+                        IsDirectionReversed="True"
+                        Minimum="{Binding MinThumbnailsPerRow, Mode=OneTime}"
+                        Maximum="{Binding MaxThumbnailsPerRow, Mode=OneTime}"
+                        Value="{Binding ThumbnailsPerRow}"
+                        TickFrequency="1" IsSnapToTickEnabled="True" />
+                <TextBlock Style="{StaticResource Caption}" Width="76" Margin="8,0,0,0"
+                           VerticalAlignment="Center" TextAlignment="Right"
+                           Text="{Binding ThumbnailsPerRowText}" />
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- Kachel einer Datei in der Ergebnisansicht -->
+        <DataTemplate DataType="{x:Type vm:ResultItemViewModel}">
+            <!-- Größe und Abstand kommen vom UniformTilePanel: Es teilt die
+                 verfügbare Breite durch die eingestellte Zahl je Reihe, damit
+                 eine Reihe immer randvoll ist. -->
+            <Border CornerRadius="6"
+                    BorderThickness="1"
+                    ToolTipService.InitialShowDelay="350"
+                    ToolTip="{Binding ToolTipText}"
+                    ContextMenuOpening="ItemTile_ContextMenuOpening"
+                    MouseLeftButtonDown="ItemTile_MouseLeftButtonDown"
+                    MouseLeftButtonUp="ItemTile_MouseLeftButtonUp"
+                    MouseMove="ItemTile_MouseMove">
+                <Border.ContextMenu>
+                    <ContextMenu />
+                </Border.ContextMenu>
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="{DynamicResource ControlFillColorSecondaryBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFailed}" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                                <Setter Property="BorderThickness" Value="2" />
+                            </DataTrigger>
+                            <!-- Blass: übersprungen oder als Duplikat vorgemerkt -->
+                            <DataTrigger Binding="{Binding IsDimmed}" Value="True">
+                                <Setter Property="Opacity" Value="0.55" />
+                            </DataTrigger>
+                            <!-- Geplante Namenskollision: wird umbenannt -->
+                            <DataTrigger Binding="{Binding IsConflict}" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                                <Setter Property="BorderThickness" Value="2" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                <Setter Property="BorderThickness" Value="2" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid>
+                    <!-- Platzhalter-Glyph, solange kein Thumbnail geladen ist -->
+                    <TextBlock FontSize="26"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Glyph}">
+                                <Setter Property="Text" Value="&#xEB9F;" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsVideo}" Value="True">
+                                        <Setter Property="Text" Value="&#xE714;" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <!-- Thumbnail als Hintergrund (respektiert CornerRadius) -->
+                    <Border CornerRadius="5"
+                            Visibility="{Binding Thumbnail, Converter={StaticResource VisibleIfNotNull}}">
+                        <Border.Background>
+                            <ImageBrush ImageSource="{Binding Thumbnail}" Stretch="UniformToFill" />
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Video-Kennzeichen -->
+                    <Border HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                            Margin="6" CornerRadius="4" Padding="5,3"
+                            Background="#B2000000"
+                            Visibility="{Binding IsVideo, Converter={StaticResource BoolToVis}}">
+                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="10"
+                                   Foreground="White" Text="&#xE768;" />
+                    </Border>
+
+                    <!-- Fehler-Kennzeichen -->
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="6" CornerRadius="4" Padding="5,3"
+                            Background="{DynamicResource SystemFillColorCriticalBrush}"
+                            Visibility="{Binding IsFailed, Converter={StaticResource BoolToVis}}">
+                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="10"
+                                   Foreground="White" Text="&#xE783;" />
+                    </Border>
+
+                    <!-- Plan-Kennzeichen: Namenskonflikt / Duplikat -->
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="6" CornerRadius="4" Padding="5,3"
+                            Background="{DynamicResource SystemFillColorCautionBrush}"
+                            Visibility="{Binding IsConflict, Converter={StaticResource BoolToVis}}">
+                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="10"
+                                   Foreground="White" Text="&#xE7BA;" />
+                    </Border>
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="6" CornerRadius="4" Padding="5,3"
+                            Background="#B2000000"
+                            Visibility="{Binding IsPlannedDuplicate, Converter={StaticResource BoolToVis}}">
+                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="10"
+                                   Foreground="White" Text="&#xE8C8;" />
+                    </Border>
+
+                    <!-- Notiz-Kennzeichen -->
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Margin="6" CornerRadius="4" Padding="5,3"
+                            Background="#B2000000"
+                            Visibility="{Binding HasNote, Converter={StaticResource BoolToVis}}">
+                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="10"
+                                   Foreground="White" Text="&#xE70B;" />
+                    </Border>
+
+                    <!-- Auswahl-Kennzeichen -->
+                    <Border HorizontalAlignment="Left" VerticalAlignment="Top"
+                            Margin="6" CornerRadius="9" Width="18" Height="18"
+                            Background="{DynamicResource AccentFillColorDefaultBrush}"
+                            Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}">
+                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="10"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                   Text="&#xE73E;" />
+                    </Border>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Zielordner-Karte in der Ergebnisansicht -->
+        <DataTemplate DataType="{x:Type vm:ResultFolderViewModel}">
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12"
+                    AllowDrop="{Binding CanEdit}"
+                    DragOver="FolderCard_DragOver"
+                    Drop="FolderCard_Drop">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Das Ordnersymbol IST der Knopf zum Öffnen. Ein
+                                 zweites Symbol rechts daneben hätte dasselbe
+                                 getan. Geplante Ordner gibt es noch nicht auf
+                                 der Platte — dann ist es nur ein Symbol. -->
+                            <!-- Bleibt aktiviert, auch wo es noch nichts zu
+                                 öffnen gibt: Abgeschaltet färbt das Thema den
+                                 Glyph grau, und die Karte verlöre ihr gelbes
+                                 Ordnersymbol. Wer auf einen erst geplanten
+                                 Ordner klickt, bekommt eine Zeile statt eines
+                                 Explorers. -->
+                            <Button Margin="0,0,12,0" Width="28" Height="28" FontSize="18"
+                                    ToolTip="{DynamicResource S.Folder.OpenTip}"
+                                    Content="&#xE8B7;"
+                                    Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                    Style="{StaticResource SubtleIconButton}"
+                                    Command="{Binding DataContext.OpenFolderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <!-- Klick auf den Namen benennt um (nur wo editierbar). -->
+                                <Button Style="{StaticResource EditableTitle}"
+                                        VerticalAlignment="Center"
+                                        ToolTip="{DynamicResource S.Folder.RenameTip}"
+                                        Click="FolderTitle_Click"
+                                        IsEnabled="{Binding CanEdit}"
+                                        Visibility="{Binding IsRenaming, Converter={StaticResource CollapsedIfTrue}}">
+                                    <TextBlock FontSize="14" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{Binding DisplayName}" />
+                                </Button>
+                                <!-- Inline-Umbenennen: Datums-Präfix bleibt stehen. -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                                            Visibility="{Binding IsRenaming, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock FontSize="14" FontWeight="SemiBold"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                               Text="{Binding RenamePrefix}" />
+                                    <TextBox x:Name="RenameBox" MinWidth="220" Margin="0,0,8,0"
+                                             VerticalAlignment="Center"
+                                             Text="{Binding EditTheme, UpdateSourceTrigger=PropertyChanged}"
+                                             KeyDown="RenameBox_KeyDown"
+                                             LostKeyboardFocus="RenameBox_LostFocus"
+                                             IsVisibleChanged="RenameBox_IsVisibleChanged" />
+                                </StackPanel>
+                                <!-- Im Plan: entsteht der Ordner neu oder gibt es ihn schon? -->
+                                <Border Margin="8,0,0,0" CornerRadius="4" Padding="6,1"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding ShowStateBadge, Converter={StaticResource BoolToVis}}">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsNew}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock FontSize="10" Text="{Binding StateBadge}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsNew}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource Caption}" Text="{Binding SummaryText}" />
+                            <!-- Leerer Planordner: wird beim Übernehmen übergangen -->
+                            <TextBlock Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                       Text="{DynamicResource S.Folder.EmptyPlanned}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource Caption}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsPlanned}" Value="True" />
+                                                    <Condition Binding="{Binding IsEmpty}" Value="True" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                        <Button Grid.Column="2" Margin="0,0,6,0"
+                                Content="&#xE74D;" ToolTip="{DynamicResource S.Folder.DeleteEmptyTip}"
+                                Command="{Binding DataContext.DeleteFolderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource SubtleIconButton}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding CanEdit}" Value="True" />
+                                                <Condition Binding="{Binding IsEmpty}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Rechts, aber vor dem Aufklapp-Pfeil; nur im Plan.
+                             Damit lässt sich ein Teil der Ordner übernehmen und
+                             der Rest liegen lassen. -->
+                        <!-- Ohne Inhalt behält das Kästchen die Polsterung für
+                             seine Beschriftung; sie stand als Lücke vor dem
+                             Aufklapp-Pfeil. -->
+                        <CheckBox Grid.Column="5" Margin="0,0,-6,0" Padding="0" VerticalAlignment="Center"
+                                  IsChecked="{Binding IsSelected}"
+                                  ToolTip="{DynamicResource S.Folder.SelectTip}"
+                                  Visibility="{Binding CanSelect, Converter={StaticResource BoolToVis}}" />
+                        <ToggleButton Grid.Column="6" IsChecked="{Binding IsExpanded}">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton" BasedOn="{StaticResource SubtleIconToggle}">
+                                    <Setter Property="Content" Value="&#xE70E;" />
+                                    <Setter Property="ToolTip" Value="{DynamicResource S.Folder.CollapseTip}" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="False">
+                                            <Setter Property="Content" Value="&#xE70D;" />
+                                            <Setter Property="ToolTip" Value="{DynamicResource S.Folder.ExpandTip}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                    </Grid>
+                    <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
+                        <ItemsControl ItemsSource="{Binding VisibleItems}" Margin="0,14,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ctl:UniformTilePanel
+                                        Columns="{Binding DataContext.ThumbnailsPerRow,
+                                                          RelativeSource={RelativeSource AncestorType=Window}}" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                        <!-- Große Karten hören nach einem Block auf. Ohne das
+                             entstehen bei tausenden Aufnahmen ebenso viele
+                             Kacheln auf einmal — nichts virtualisiert hier. -->
+                        <Button HorizontalAlignment="Center" Margin="0,12,0,0"
+                                Visibility="{Binding HasHiddenItems, Converter={StaticResource BoolToVis}}"
+                                Content="{Binding HiddenItemsText}"
+                                Command="{Binding ShowMoreTilesCommand}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="430" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ======================= Einstellungen ======================= -->
+        <Border Grid.Column="0"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,1,0">
+            <!-- Kopf und Navigation stehen fest, nur die Einstellungen
+                 darunter scrollen. -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="24,20,24,0">
+
+                    <!-- Kopf -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                        <Border Width="40" Height="40" CornerRadius="10"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}">
+                            <TextBlock FontFamily="Segoe Fluent Icons" FontSize="20"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                       Text="&#xEB9F;" />
+                        </Border>
+                        <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock FontSize="18" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                       Text="Media Organizer" />
+                            <TextBlock Style="{StaticResource Caption}"
+                                       Text="{DynamicResource S.App.Tagline}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Navigation: Sortieren / Wissen / Einstellungen (bewusst
+                         in der App statt in eigenen Fenstern). Das Zahnrad
+                         bekommt keine Beschriftung — es ist das eine Symbol,
+                         das jeder kennt, und spart die Breite für die beiden
+                         Ansichten, die man tatsächlich wechselt. -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ToggleButton Grid.Column="0" Style="{StaticResource NavToggle}" Margin="0,0,4,0"
+                                      IsChecked="{Binding ShowOrganize, Mode=OneWay}"
+                                      Command="{Binding OpenOrganizeCommand}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="13"
+                                           VerticalAlignment="Center" Margin="0,0,8,0" Text="&#xE8B7;" />
+                                <TextBlock Text="{DynamicResource S.Nav.Organize}" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton Grid.Column="1" Style="{StaticResource NavToggle}" Margin="4,0,0,0"
+                                      IsChecked="{Binding ShowKnowledge, Mode=OneWay}"
+                                      Command="{Binding OpenKnowledgeCommand}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock FontFamily="Segoe Fluent Icons" FontSize="13"
+                                           VerticalAlignment="Center" Margin="0,0,8,0" Text="&#xE8F1;" />
+                                <TextBlock Text="{DynamicResource S.Nav.Knowledge}" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton Grid.Column="2" Style="{StaticResource NavToggle}" Margin="8,0,0,0"
+                                      Padding="12,0" MinWidth="44"
+                                      ToolTip="{DynamicResource S.Nav.Settings}"
+                                      IsChecked="{Binding ShowSettings, Mode=OneWay}"
+                                      Command="{Binding OpenSettingsCommand}">
+                            <TextBlock FontFamily="Segoe Fluent Icons" FontSize="15"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Text="&#xE713;" />
+                        </ToggleButton>
+                    </Grid>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="24,0,24,24">
+
+                    <!-- Warum die Hälfte der Felder gesperrt ist. Steht über
+                         den Karten, nicht an jedem Feld: der Grund ist für
+                         alle derselbe. -->
+                    <TextBlock Style="{StaticResource Caption}" Margin="0,0,0,12" TextWrapping="Wrap"
+                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                               Visibility="{Binding ShowRunSettingsLockedHint, Converter={StaticResource BoolToVis}}"
+                               Text="{DynamicResource S.Settings.PlanOpen}" />
+
+                    <!-- Ordner -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource S.Card.Folders}" />
+
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="{DynamicResource S.Field.SourceFolder}" />
+                            <Grid Margin="0,0,0,10" IsEnabled="{Binding CanEditRunSettings}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding SourceFolder, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Grid.Column="1" Style="{StaticResource IconButton}"
+                                        Margin="6,0,0,0" Content="&#xE838;"
+                                        ToolTip="{DynamicResource S.Tip.ChooseSource}"
+                                        Command="{Binding BrowseSourceCommand}" />
+                            </Grid>
+
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="{DynamicResource S.Field.TargetFolder}" />
+                            <Grid IsEnabled="{Binding CanEditFilingSettings}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding TargetFolder, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Grid.Column="1" Style="{StaticResource IconButton}"
+                                        Margin="6,0,0,0" Content="&#xE838;"
+                                        ToolTip="{DynamicResource S.Tip.ChooseTarget}"
+                                        Command="{Binding BrowseTargetCommand}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Ablage -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource S.Card.Storage}" />
+
+                            <ToggleButton Style="{StaticResource ToggleSwitch}"
+                                          IsEnabled="{Binding CanEditFilingSettings}"
+                                          IsChecked="{Binding IsCopyMode}">
+                                <StackPanel MaxWidth="285">
+                                    <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{DynamicResource S.Transfer.Move}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsCopyMode}" Value="True">
+                                                        <Setter Property="Text" Value="{DynamicResource S.Transfer.Copy}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource Caption}">
+                                                <Setter Property="Text" Value="{DynamicResource S.Transfer.MoveHint}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsCopyMode}" Value="True">
+                                                        <Setter Property="Text" Value="{DynamicResource S.Transfer.CopyHint}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <TextBlock Style="{StaticResource FieldLabel}" Margin="0,14,0,4"
+                                       Text="{DynamicResource S.Field.Hierarchy}" />
+                            <ComboBox ItemsSource="{Binding HierarchyOptions}"
+                                      SelectedItem="{Binding SelectedHierarchy}"
+                                      DisplayMemberPath="Label"
+                                      IsEnabled="{Binding CanEditFilingSettings}"
+                                      HorizontalAlignment="Stretch" />
+
+                            <!-- Gehört hierher und nicht zur Gruppierung: Es
+                                 geht nicht darum, WAS in den Sammelordner
+                                 kommt, sondern wo er liegt — und das hängt an
+                                 der Ebene direkt darüber. -->
+                            <ToggleButton Style="{StaticResource ToggleSwitch}" Margin="0,10,0,0"
+                                          IsChecked="{Binding SplitDatelessByHierarchy}"
+                                          IsEnabled="{Binding CanEditSplitDateless}">
+                                <StackPanel MaxWidth="285">
+                                    <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{DynamicResource S.Split.Toggle}" />
+                                    <TextBlock Style="{StaticResource Caption}"
+                                               Text="{DynamicResource S.Split.Hint}" />
+                                </StackPanel>
+                            </ToggleButton>
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,6,0,0"
+                                       Text="{Binding SplitDatelessHint}" />
+
+                            <TextBlock Style="{StaticResource FieldLabel}" Margin="0,14,0,4"
+                                       Text="{DynamicResource S.Field.OutputLanguage}" />
+                            <ComboBox ItemsSource="{Binding OutputLanguageOptions}"
+                                      SelectedItem="{Binding SelectedOutputLanguage}"
+                                      DisplayMemberPath="Label"
+                                      IsEnabled="{Binding CanEditRunSettings}"
+                                      HorizontalAlignment="Stretch" />
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,6,0,0"
+                                       Text="{Binding OutputLanguageHint}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Gruppierung -->
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource S.Card.Grouping}" />
+                            <ComboBox ItemsSource="{Binding GroupingOptions}"
+                                      SelectedItem="{Binding SelectedGroupingMode}"
+                                      DisplayMemberPath="Label"
+                                      IsEnabled="{Binding CanEditRunSettings}"
+                                      HorizontalAlignment="Stretch" />
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,8,0,0"
+                                       Text="{DynamicResource S.Grouping.Intro}" />
+                            <!-- Erklärt den gewählten Modus. Ohne diesen Text
+                                 verraten die drei Namen nicht, worin sie sich
+                                 unterscheiden. -->
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,6,0,0"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                       Text="{Binding GroupingModeHint}" />
+
+                            <ToggleButton Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                          IsChecked="{Binding SkipDuplicates}"
+                                          IsEnabled="{Binding CanEditRunSettings}">
+                                <StackPanel MaxWidth="285">
+                                    <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{DynamicResource S.Duplicates.Toggle}" />
+                                    <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap"
+                                               Text="{DynamicResource S.Duplicates.Hint}" />
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <ToggleButton Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                          IsChecked="{Binding CollectUnmatched}"
+                                          IsEnabled="{Binding CanEditCollectUnmatched}">
+                                <StackPanel MaxWidth="285">
+                                    <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{DynamicResource S.Unmatched.Toggle}" />
+                                    <TextBlock Style="{StaticResource Caption}"
+                                               Text="{DynamicResource S.Unmatched.Hint}" />
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <TextBlock Style="{StaticResource FieldLabel}" Margin="0,10,0,4"
+                                       Text="{DynamicResource S.Field.UnmatchedName}" />
+                            <TextBox Text="{Binding UnmatchedFolderName, UpdateSourceTrigger=LostFocus}"
+                                     IsEnabled="{Binding CanEditUnmatchedName}" />
+
+                            <!-- Zahlenwerte: Beschriftung und Erklärung links,
+                                 Feld rechts. Spart Höhe gegenüber drei
+                                 gestapelten Blöcken und macht auf einen Blick
+                                 sichtbar, welcher Wert wozu gehört. -->
+                            <Grid Style="{StaticResource NumberSettingRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Margin="0"
+                                               Text="{DynamicResource S.Field.MinItems}" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0"
+                                               Text="{Binding MinItemsPerFolderHint}" />
+                                </StackPanel>
+                                <ctl:NumberInput Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top"
+                                                 Minimum="1" Maximum="999" Step="1" Decimals="0"
+                                                 IsEnabled="{Binding CanEditRunSettings}"
+                                                 Value="{Binding MinItemsPerFolder, Mode=TwoWay}" />
+                            </Grid>
+
+
+                            <!-- Zeitliche Grenze eines Ereignisses. Steht vor
+                                 den Radien: Erst die Zeit schneidet, dann der
+                                 Ort. -->
+                            <Grid Style="{StaticResource NumberSettingRow}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource FieldLabel}" Margin="0"
+                                               Text="{DynamicResource S.Field.MaxEventGap}" />
+                                    <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0"
+                                               Text="{Binding MaxEventGapHint}" />
+                                </StackPanel>
+                                <!-- Bruchteile erlaubt (0,8 Tage = gut 19 h):
+                                     Die Schrittweite geht in halben Tagen, ein
+                                     krummer Wert lässt sich eintippen. -->
+                                <ctl:NumberInput Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top"
+                                                 Minimum="0.1" Maximum="60" Step="0.5" Decimals="1"
+                                                 Unit="{DynamicResource S.Unit.Days}"
+                                                 IsEnabled="{Binding CanEditRunSettings}"
+                                                 Value="{Binding MaxEventGapDays, Mode=TwoWay}" />
+                            </Grid>
+
+                            <!-- Die beiden Radien gehören zusammen und werden
+                                 sonst leicht verwechselt. -->
+                            <Border Margin="0,14,0,0" Padding="0,12,0,0"
+                                    BorderThickness="0,1,0,0"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource FieldLabel}" Margin="0,0,0,2"
+                                               Text="{DynamicResource S.Field.Spatial}" />
+                                    <TextBlock Style="{StaticResource Caption}"
+                                               Text="{DynamicResource S.Field.SpatialHint}" />
+
+                                    <Grid Style="{StaticResource NumberSettingRow}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                       Text="{DynamicResource S.Field.SamePlace}" />
+                                            <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0"
+                                                       Text="{Binding GpsGroupRadiusHint}" />
+                                        </StackPanel>
+                                        <!-- Kein IsEnabled mehr an NeedsLlm: Ohne Modell zerlegt
+                                             dieser Radius das Zeitfenster in Orte und ist dort
+                                             wichtiger als mit Modell. -->
+                                        <ctl:NumberInput Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top"
+                                                         Minimum="0" Maximum="500" Step="0.5" Decimals="1" Unit="km"
+                                                         IsEnabled="{Binding CanEditRunSettings}"
+                                                         Value="{Binding GpsGroupRadiusKm, Mode=TwoWay}" />
+                                    </Grid>
+
+                                    <Grid Style="{StaticResource NumberSettingRow}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                       Text="{DynamicResource S.Field.WholeGroups}" />
+                                            <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0"
+                                                       Text="{Binding RegionMergeHint}" />
+                                        </StackPanel>
+                                        <ctl:NumberInput Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top"
+                                                         Minimum="0" Maximum="500" Step="1" Decimals="0" Unit="km"
+                                                         IsEnabled="{Binding CanEditRunSettings}"
+                                                         Value="{Binding RegionMergeRadiusKm, Mode=TwoWay}" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <ToggleButton Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                          IsChecked="{Binding WriteDescriptionToExif}"
+                                          IsEnabled="{Binding CanEditWriteDescription}">
+                                <StackPanel MaxWidth="285">
+                                    <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{DynamicResource S.Exif.Toggle}" />
+                                    <TextBlock Style="{StaticResource Caption}"
+                                               Text="{DynamicResource S.Exif.Hint}" />
+                                </StackPanel>
+                            </ToggleButton>
+                        </StackPanel>
+                    </Border>
+
+
+                    <!-- Wissen & Gesichtserkennung (früher zwei getrennte Karten:
+                         Verwaltet wird alles in der Wissensansicht) -->
+                    <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource S.Card.Knowledge}" />
+
+                            <ToggleButton Style="{StaticResource ToggleSwitch}"
+                                          IsChecked="{Binding FaceRecognitionEnabled}"
+                                          IsEnabled="{Binding CanEditRunSettings}">
+                                <StackPanel MaxWidth="285">
+                                    <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{DynamicResource S.Faces.Toggle}" />
+                                    <TextBlock Style="{StaticResource Caption}"
+                                               Text="{DynamicResource S.Faces.Hint}" />
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <Grid Margin="0,12,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Ellipse Grid.Column="0" Width="9" Height="9" Margin="0,0,8,0"
+                                         VerticalAlignment="Center">
+                                    <Ellipse.Style>
+                                        <Style TargetType="Ellipse">
+                                            <Setter Property="Fill" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding FaceModelsInstalled}" Value="True">
+                                                    <Setter Property="Fill" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Ellipse.Style>
+                                </Ellipse>
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                           Text="{Binding FaceModelsStatusText}" />
+                                <Button Grid.Column="2" Style="{StaticResource IconButton}"
+                                        Content="&#xE72C;" ToolTip="{DynamicResource S.Tip.Recheck}"
+                                        Command="{Binding RefreshFaceStatusCommand}" />
+                            </Grid>
+
+                            <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                    Command="{Binding DownloadFaceModelsCommand}"
+                                    Visibility="{Binding CanDownloadFaceModels, Converter={StaticResource BoolToVis}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontFamily="Segoe Fluent Icons" FontSize="13"
+                                               VerticalAlignment="Center" Margin="0,0,8,0" Text="&#xE896;" />
+                                    <TextBlock Text="{DynamicResource S.Faces.Download}" />
+                                </StackPanel>
+                            </Button>
+                            <ProgressBar Height="4" Margin="0,8,0,0" Maximum="1"
+                                         Value="{Binding FaceModelProgress}"
+                                         Visibility="{Binding IsDownloadingFaceModels, Converter={StaticResource BoolToVis}}" />
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,6,0,0"
+                                       Visibility="{Binding FaceModelStatusDetail, Converter={StaticResource VisibleIfNotNull}}"
+                                       Text="{Binding FaceModelStatusDetail}" />
+                            <!-- Eine Kennzahlenzeile genügt; der Umschalter
+                                 oben führt in die Wissensansicht. -->
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,10,0,0"
+                                       Text="{Binding KnowledgeSummary}" />
+                        </StackPanel>
+                    </Border>
+
+
+                </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- ======================= Hauptbereich ======================= -->
+        <Grid Grid.Column="1">
+
+            <!-- Einstellungen: was NICHT zu jedem Lauf gehört. Eigene Seite,
+                 weil die linke Leiste sonst länger wird als der Bildschirm —
+                 und weil man Modell, ffmpeg und Aktualisierung einmal einstellt
+                 und dann nie wieder ansieht. -->
+            <Grid Margin="24,20,24,16"
+                  Visibility="{Binding ShowSettings, Converter={StaticResource BoolToVis}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                    <TextBlock FontSize="24" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Text="{DynamicResource S.Nav.Settings}" />
+                    <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,6,0,0"
+                               Text="{DynamicResource S.Settings.Intro}" />
+                    <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap" Margin="0,6,0,0"
+                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                               Visibility="{Binding ShowRunSettingsLockedHint, Converter={StaticResource BoolToVis}}"
+                               Text="{DynamicResource S.Settings.PlanOpen}" />
+                </StackPanel>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Oberfläche. Die Sprache der Oberfläche gehört
+                             hierher und nicht zu den Lauf-Einstellungen: Sie
+                             ändert nichts am Ergebnis, nur an der Anzeige. Die
+                             Sprache der ORDNERNAMEN steht weiterhin links —
+                             die entscheidet über den Inhalt eines Laufs. -->
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="{DynamicResource S.Card.Interface}" />
+                                <TextBlock Style="{StaticResource FieldLabel}"
+                                           Text="{DynamicResource S.Field.UiLanguage}" />
+                                <ComboBox ItemsSource="{Binding UiLanguageOptions}"
+                                          SelectedItem="{Binding SelectedUiLanguage}"
+                                          DisplayMemberPath="Label"
+                                          HorizontalAlignment="Stretch" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Lokales LLM -->
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource S.Card.Llm}" />
+
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Ellipse Grid.Column="0" Width="9" Height="9" Margin="0,0,8,0"
+                                             VerticalAlignment="Center">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding OllamaState}"
+                                                                 Value="{x:Static vm:OllamaState.Online}">
+                                                        <Setter Property="Fill" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding OllamaState}"
+                                                                 Value="{x:Static vm:OllamaState.Offline}">
+                                                        <Setter Property="Fill" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{Binding OllamaStatusText}" />
+                                    <Button Grid.Column="2" Style="{StaticResource IconButton}"
+                                            Content="&#xE72C;" ToolTip="{DynamicResource S.Tip.RecheckConnection}"
+                                            Command="{Binding RefreshOllamaCommand}" />
+                                </Grid>
+
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="{DynamicResource S.Field.Endpoint}" />
+                                <TextBox Margin="0,0,0,10"
+                                         IsEnabled="{Binding CanEditRunSettings}"
+                                         Text="{Binding OllamaEndpoint, UpdateSourceTrigger=LostFocus}" />
+
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="{DynamicResource S.Field.Model}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="0"
+                                              ItemsSource="{Binding Models}"
+                                              SelectedItem="{Binding SelectedModel}"
+                                              DisplayMemberPath="DisplayText"
+                                              HorizontalAlignment="Stretch"
+                                              IsEnabled="{Binding CanEditModel}" />
+                                    <Button Grid.Column="1" Margin="6,0,0,0"
+                                            Content="&#xE896;" ToolTip="{DynamicResource S.Tip.PullModel}"
+                                            Command="{Binding PullModelCommand}"
+                                            CommandParameter="{Binding SelectedModel}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedModel.IsInstalled}" Value="True">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </Grid>
+
+                                <!-- Download des gewählten Modells: direkt unter der Modellauswahl -->
+                                <StackPanel Margin="0,10,0,0"
+                                            Visibility="{Binding IsPulling, Converter={StaticResource BoolToVis}}">
+                                    <ProgressBar Height="4"
+                                                 Maximum="1"
+                                                 Value="{Binding PullFraction}"
+                                                 IsIndeterminate="{Binding PullIndeterminate}" />
+                                    <Grid Margin="0,6,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Style="{StaticResource Caption}"
+                                                   Text="{Binding PullStatusText}" />
+                                        <Button Grid.Column="1" Content="{DynamicResource S.Cancel}" Margin="8,0,0,0"
+                                                Command="{Binding CancelPullCommand}" />
+                                    </Grid>
+                                </StackPanel>
+
+                                <TextBlock Style="{StaticResource Caption}" Margin="0,8,0,0"
+                                           Visibility="{Binding IsPulling, Converter={StaticResource InverseBool}, FallbackValue=Collapsed}"
+                                           Text="{Binding PullStatusText}" />
+
+                                <TextBlock Style="{StaticResource Caption}" Margin="0,6,0,0"
+                                           Text="{DynamicResource S.Model.Hint}" />
+
+                                <ToggleButton Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                              IsChecked="{Binding UseAnalysisCache}"
+                                              IsEnabled="{Binding CanEditRunSettings}">
+                                    <StackPanel MaxWidth="285">
+                                        <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                   Text="{DynamicResource S.Cache.Toggle}" />
+                                        <TextBlock Style="{StaticResource Caption}"
+                                                   Text="{DynamicResource S.Cache.Hint}" />
+                                    </StackPanel>
+                                </ToggleButton>
+                                <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                        Content="{DynamicResource S.Cache.Clear}"
+                                        ToolTip="{DynamicResource S.Cache.ClearTip}"
+                                        Command="{Binding ClearAnalysisCacheFileCommand}" />
+
+                                <!-- Tempo. Steht bewusst beim Modell: Hier
+                                     entscheidet sich, wie lange ein Lauf dauert —
+                                     die Analyse macht rund 93 % davon aus. -->
+                                <Border Margin="0,14,0,0" Padding="0,12,0,0"
+                                        BorderThickness="0,1,0,0"
+                                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource FieldLabel}" Margin="0,0,0,2"
+                                                   Text="{DynamicResource S.Speed.Title}" />
+
+                                        <Grid Style="{StaticResource NumberSettingRow}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Style="{StaticResource FieldLabel}" Margin="0"
+                                                           Text="{DynamicResource S.Field.Parallel}" />
+                                                <TextBlock Style="{StaticResource Caption}" Margin="0,2,0,0"
+                                                           Text="{Binding MaxParallelAnalysesHint}" />
+                                            </StackPanel>
+                                            <ctl:NumberInput Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Top"
+                                                             Minimum="1" Maximum="16" Step="1" Decimals="0"
+                                                             IsEnabled="{Binding CanEditRunSettings}"
+                                                             Value="{Binding MaxParallelAnalyses, Mode=TwoWay}" />
+                                        </Grid>
+
+                                        <ToggleButton Style="{StaticResource ToggleSwitch}" Margin="0,14,0,0"
+                                                      IsChecked="{Binding ReuseBurstDescriptions}"
+                                                      IsEnabled="{Binding CanEditRunSettings}">
+                                            <StackPanel MaxWidth="285">
+                                                <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                           Text="{DynamicResource S.Burst.Toggle}" />
+                                                <TextBlock Style="{StaticResource Caption}"
+                                                           Text="{DynamicResource S.Burst.Hint}" />
+                                            </StackPanel>
+                                        </ToggleButton>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Videoanalyse (ffmpeg) -->
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource S.Card.Video}" />
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Ellipse Grid.Column="0" Width="9" Height="9" Margin="0,0,8,0"
+                                             VerticalAlignment="Center">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding FfmpegAvailable}" Value="True">
+                                                        <Setter Property="Fill" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                               Text="{Binding FfmpegStatusText}" />
+                                    <Button Grid.Column="2" Style="{StaticResource IconButton}"
+                                            Content="&#xE72C;" ToolTip="{DynamicResource S.Tip.Recheck}"
+                                            Command="{Binding RefreshFfmpegCommand}" />
+                                </Grid>
+                                <Button Margin="0,8,0,0" HorizontalAlignment="Left"
+                                        Command="{Binding InstallFfmpegCommand}"
+                                        Visibility="{Binding CanInstallFfmpeg, Converter={StaticResource BoolToVis}}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontFamily="Segoe Fluent Icons" FontSize="13"
+                                                   VerticalAlignment="Center" Margin="0,0,8,0" Text="&#xE896;" />
+                                        <TextBlock Text="{DynamicResource S.Ffmpeg.Install}" />
+                                    </StackPanel>
+                                </Button>
+                                <ProgressBar Height="4" Margin="0,8,0,0" IsIndeterminate="True"
+                                             Visibility="{Binding IsInstallingFfmpeg, Converter={StaticResource BoolToVis}}" />
+                                <TextBlock Style="{StaticResource Caption}" Margin="0,6,0,0"
+                                           Visibility="{Binding FfmpegStatusDetail, Converter={StaticResource VisibleIfNotNull}}"
+                                           Text="{Binding FfmpegStatusDetail}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- About & updates. Bound to its own view model, so every
+                             binding below is relative to UpdateViewModel. -->
+                        <Border Style="{StaticResource Card}" Margin="0,12,0,0"
+                                DataContext="{Binding Update}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Style="{StaticResource SectionTitle}"
+                                               Text="{DynamicResource S.Card.Update}" />
+                                    <TextBlock Grid.Column="1" Style="{StaticResource Caption}"
+                                               VerticalAlignment="Center"
+                                               Text="{Binding CurrentVersionText}" />
+                                </Grid>
+
+                                <ToggleButton Style="{StaticResource ToggleSwitch}"
+                                              IsChecked="{Binding CheckOnStart}">
+                                    <StackPanel MaxWidth="285">
+                                        <TextBlock Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                   Text="{DynamicResource S.Update.Toggle}" />
+                                        <TextBlock Style="{StaticResource Caption}"
+                                                   Text="{DynamicResource S.Update.Hint}" />
+                                    </StackPanel>
+                                </ToggleButton>
+
+                                <TextBlock Style="{StaticResource Caption}" Margin="0,12,0,0"
+                                           TextWrapping="Wrap" Text="{Binding StatusText}" />
+
+                                <ProgressBar Height="4" Margin="0,8,0,0" Maximum="1"
+                                             Value="{Binding Progress}"
+                                             Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
+
+                                <TextBlock Style="{StaticResource Caption}" Margin="0,8,0,0"
+                                           TextWrapping="Wrap" MaxHeight="120"
+                                           Visibility="{Binding ReleaseNotes, Converter={StaticResource VisibleIfNotNull}}"
+                                           Text="{Binding ReleaseNotes}" />
+
+                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                    <Button Command="{Binding CheckCommand}" Content="{DynamicResource S.Update.CheckNow}" />
+                                    <Button Margin="8,0,0,0"
+                                            Command="{Binding InstallCommand}"
+                                            Visibility="{Binding HasUpdate, Converter={StaticResource BoolToVis}}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock FontFamily="Segoe Fluent Icons" FontSize="13"
+                                                       VerticalAlignment="Center" Margin="0,0,8,0" Text="&#xE896;" />
+                                            <TextBlock Text="{DynamicResource S.Update.Install}" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Wissensansicht (statt eigenem Fenster) -->
+            <views:KnowledgeView x:Name="KnowledgePane" Margin="24,20,24,16"
+                                 DataContext="{Binding Knowledge}"
+                                 Visibility="{Binding DataContext.ShowKnowledge,
+                                              RelativeSource={RelativeSource AncestorType=Window},
+                                              Converter={StaticResource BoolToVis}}" />
+
+            <!-- Sortier-Ansichten -->
+            <Grid Visibility="{Binding ShowOrganize, Converter={StaticResource BoolToVis}}">
+
+            <!-- Startansicht: Ist-Zustand des Quellordners -->
+            <Grid Margin="24,20,24,16">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="{x:Static vm:AppState.Idle}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Kopfzeile mit Kennzahlen und Startknopf -->
+                <Grid Grid.Row="0" Margin="24,0,24,12"
+                      Visibility="{Binding HasSourceSnapshot, Converter={StaticResource BoolToVis}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" FontSize="24" FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                   Text="{DynamicResource S.Current}" />
+                        <!-- Drei Symbolknöpfe gleicher Größe. Der Startknopf
+                             trägt zusätzlich die Akzentfarbe, weil er die
+                             Hauptaktion ist; sein Symbol allein würde sich sonst
+                             nicht von den beiden Nebenaktionen abheben. Was sie
+                             tun, sagen die Kurzhinweise. -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Style="{StaticResource IconButton}" Margin="0,0,8,0"
+                                    Content="&#xE7A7;" ToolTip="{DynamicResource S.UndoTipIdle}"
+                                    Visibility="{Binding CanUndoLastRun, Converter={StaticResource BoolToVis}}"
+                                    Click="UndoLastRun_Click" />
+                            <Button Style="{StaticResource IconButton}" Margin="0,0,8,0"
+                                    Content="&#xE72C;" ToolTip="{DynamicResource S.Tip.RescanSource}"
+                                    Command="{Binding RescanSourceCommand}" />
+                            <Button Style="{DynamicResource AccentButtonStyle}"
+                                    FontFamily="Segoe Fluent Icons" FontSize="14"
+                                    Width="34" Height="32" Padding="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Content="&#xE768;" ToolTip="{DynamicResource S.StartTip}"
+                                    Command="{Binding StartCommand}" />
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock Grid.Row="1" Margin="0,6,0,0"
+                               Style="{StaticResource Caption}" TextWrapping="Wrap"
+                               Text="{Binding SourceSummaryText}" />
+                </Grid>
+
+                <Grid Grid.Row="1"
+                      Visibility="{Binding HasSourceSnapshot, Converter={StaticResource BoolToVis}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <ProgressBar Height="4" Margin="0,0,0,8" IsIndeterminate="True"
+                                     Visibility="{Binding IsScanningSource, Converter={StaticResource BoolToVis}}" />
+                        <TextBlock Margin="0,0,0,8" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                   Visibility="{Binding StartBlockReason, Converter={StaticResource VisibleIfNotNull}}"
+                                   Text="{Binding StartBlockReason}" />
+                        <TextBlock Margin="0,0,0,8" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                   Visibility="{Binding RunError, Converter={StaticResource VisibleIfNotNull}}"
+                                   Text="{Binding RunError}" />
+                    </StackPanel>
+                    <ContentControl Grid.Column="1" VerticalAlignment="Top"
+                                    ContentTemplate="{StaticResource ThumbnailZoom}"
+                                    Content="{Binding}" />
+                </Grid>
+
+                <!-- Ist-Zustand vor dem Lauf: gleiche Bauweise wie die
+                     Ergebnisliste — ScrollViewer in der Vorlage, damit das
+                     VirtualizingStackPanel greift. -->
+                <ItemsControl Grid.Row="2" ItemsSource="{Binding SourceFolders}" Margin="0,4,0,0"
+                              VirtualizingPanel.IsVirtualizing="True"
+                              VirtualizingPanel.VirtualizationMode="Recycling"
+                              VirtualizingPanel.ScrollUnit="Pixel"
+                              PreviewMouseWheel="Results_PreviewMouseWheel"
+                              Visibility="{Binding HasSourceSnapshot, Converter={StaticResource BoolToVis}}">
+                    <ItemsControl.Template>
+                        <ControlTemplate TargetType="ItemsControl">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </ControlTemplate>
+                    </ItemsControl.Template>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock Grid.Row="3" Margin="0,10,0,0"
+                           Style="{StaticResource Caption}"
+                           Visibility="{Binding StatusMessage, Converter={StaticResource VisibleIfNotNull}}"
+                           Text="{Binding StatusMessage}" />
+
+                <!-- Solange (noch) kein Quellordner gelesen ist -->
+                <StackPanel Grid.Row="0" Grid.RowSpan="4"
+                            VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="480"
+                            Visibility="{Binding HasSourceSnapshot, Converter={StaticResource CollapsedIfTrue}}">
+                    <TextBlock FontFamily="Segoe Fluent Icons" FontSize="52"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                               Text="&#xE8B9;" />
+                    <TextBlock FontSize="26" FontWeight="SemiBold" Margin="0,18,0,8"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Text="{DynamicResource S.Ready.Title}" />
+                    <TextBlock Style="{StaticResource Caption}" FontSize="13"
+                               TextAlignment="Center"
+                               Text="{DynamicResource S.Ready.Body}" />
+                    <ProgressBar Height="4" Margin="0,20,0,0" IsIndeterminate="True"
+                                 Visibility="{Binding IsScanningSource, Converter={StaticResource BoolToVis}}" />
+                    <Button Margin="0,24,0,0"
+                            HorizontalAlignment="Center"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            FontSize="14" Padding="28,8"
+                            Content="{DynamicResource S.Start}"
+                            Command="{Binding StartCommand}" />
+                    <TextBlock Margin="0,16,0,0" TextAlignment="Center" TextWrapping="Wrap"
+                               Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                               Visibility="{Binding StartBlockReason, Converter={StaticResource VisibleIfNotNull}}"
+                               Text="{Binding StartBlockReason}" />
+                    <TextBlock Margin="0,16,0,0" TextAlignment="Center" TextWrapping="Wrap"
+                               Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                               Visibility="{Binding RunError, Converter={StaticResource VisibleIfNotNull}}"
+                               Text="{Binding RunError}" />
+                    <TextBlock Margin="0,16,0,0" TextAlignment="Center" TextWrapping="Wrap"
+                               Style="{StaticResource Caption}"
+                               Visibility="{Binding StatusMessage, Converter={StaticResource VisibleIfNotNull}}"
+                               Text="{Binding StatusMessage}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Verarbeitung -->
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="{x:Static vm:AppState.Running}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="460">
+                    <TextBlock FontSize="22" FontWeight="SemiBold" Margin="0,0,0,16"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               Text="{Binding PhaseTitle}" />
+                    <ProgressBar Height="5"
+                                 Maximum="1"
+                                 Value="{Binding ProgressFraction}"
+                                 IsIndeterminate="{Binding ProgressIndeterminate}" />
+                    <TextBlock Style="{StaticResource Caption}" Margin="0,10,0,0"
+                               HorizontalAlignment="Center" TextAlignment="Center"
+                               Text="{Binding ProgressMessage}" />
+                    <Button Margin="0,24,0,0" HorizontalAlignment="Center"
+                            Content="{DynamicResource S.Cancel}"
+                            Command="{Binding CancelRunCommand}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Plan-Editor (Soll-Zustand) und Ergebnis.
+                 Kein seitlicher Rand am Rahmen: Der Streifen gehörte sonst
+                 diesem Element, und die Rahmenauswahl ließ sich dort nicht
+                 aufziehen. Den Rand tragen die Zeilen selbst. -->
+            <Grid Margin="0,20,0,16">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="{x:Static vm:AppState.Plan}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="{x:Static vm:AppState.Results}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Kopfzeile im Plan-Zustand: Zusammenfassung und Aktionen.
+                     Titel und Hauptaktionen nebeneinander, die Nebenaktionen
+                     darunter über die volle Breite — sonst quetscht die
+                     Knopfleiste den Titel zusammen. -->
+                <Grid Grid.Row="0" Margin="24,0,24,12"
+                      Visibility="{Binding IsPlanState, Converter={StaticResource BoolToVis}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Umschalter statt Überschrift: Er sagt, was man
+                             sieht, UND lässt wechseln. Zwei Segmente im Stil
+                             der Hauptnavigation statt eines TabControls — das
+                             brächte eine zweite Rahmen-Optik mit, und die
+                             beiden Seiten sind keine Reiter, sondern zwei
+                             Blicke auf dieselbe Sache. -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ToggleButton Style="{StaticResource NavToggle}" MinWidth="150" Padding="16,8"
+                                          ToolTip="{DynamicResource S.BackToPreviewTip}"
+                                          IsChecked="{Binding ShowSourceView, Converter={StaticResource InverseBool}, Mode=OneWay}"
+                                          Command="{Binding ShowPlanViewCommand}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock FontFamily="Segoe Fluent Icons" FontSize="13"
+                                               VerticalAlignment="Center" Margin="0,0,8,0" Text="&#xE7C5;" />
+                                    <TextBlock Text="{DynamicResource S.View.Plan}" />
+                                </StackPanel>
+                            </ToggleButton>
+                            <ToggleButton Style="{StaticResource NavToggle}" MinWidth="150" Padding="16,8"
+                                          Margin="8,0,0,0"
+                                          ToolTip="{DynamicResource S.ShowCurrentTip}"
+                                          Visibility="{Binding HasSourceSnapshot, Converter={StaticResource BoolToVis}}"
+                                          IsChecked="{Binding ShowSourceView, Mode=OneWay}"
+                                          Command="{Binding ShowSourceViewModeCommand}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock FontFamily="Segoe Fluent Icons" FontSize="13"
+                                               VerticalAlignment="Center" Margin="0,0,8,0" Text="&#xE8B7;" />
+                                    <TextBlock Text="{DynamicResource S.View.Current}" />
+                                </StackPanel>
+                            </ToggleButton>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Nur Symbole. Was sie tun, steht im Kurzhinweis;
+                                 beim Übernehmen sagt er auch, WIE VIEL — alles
+                                 oder die angehakten Ordner. -->
+                            <Button Margin="0,0,8,0"
+                                    Style="{DynamicResource AccentButtonStyle}"
+                                    FontFamily="Segoe Fluent Icons" FontSize="15"
+                                    Width="40" Height="34" Padding="0"
+                                    HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                    Content="&#xE73E;"
+                                    ToolTip="{Binding ApplyButtonTip}"
+                                    Command="{Binding ApplyPlanCommand}" />
+                            <Button Style="{StaticResource IconButton}"
+                                    Width="40" Height="34" FontSize="15"
+                                    Content="&#xE711;"
+                                    ToolTip="{DynamicResource S.DiscardTip}"
+                                    Command="{Binding DiscardPlanCommand}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Margin="0,6,0,0">
+                        <TextBlock FontSize="13" TextWrapping="Wrap"
+                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                   Visibility="{Binding ShowSourceView, Converter={StaticResource CollapsedIfTrue}}"
+                                   Text="{Binding PlanSummaryText}" />
+                        <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap"
+                                   Text="{Binding ActiveViewHint}" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="2" Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ContentControl Grid.Column="1" VerticalAlignment="Top" Margin="12,0,0,6"
+                                        ContentTemplate="{StaticResource ThumbnailZoom}"
+                                        Content="{Binding}" />
+                    <!-- Nur am Soll-Zustand sinnvoll; im Ist-Zustand ausblenden.
+                         Drei Symbole statt vier Beschriftungen: "Leere Ordner
+                         entfernen" ist entfallen, dieselbe Aktion sitzt als
+                         Papierkorb auf jeder leer gewordenen Karte. -->
+                    <WrapPanel Grid.Column="0"
+                               Visibility="{Binding ShowSourceView, Converter={StaticResource CollapsedIfTrue}}">
+                        <Button Style="{StaticResource IconButton}" Margin="0,0,8,6"
+                                Content="&#xE710;" ToolTip="{DynamicResource S.CreateFolderTip}"
+                                Click="CreateFolder_Click" />
+                        <Button Style="{StaticResource IconButton}" Margin="0,0,8,6"
+                                Content="&#xE77B;" ToolTip="{DynamicResource S.RecognizeRenameTipPlan}"
+                                Command="{Binding RenameWithPeopleCommand}" />
+                        <Button Style="{StaticResource IconButton}" Margin="0,0,8,6"
+                                Content="&#xE8C8;" ToolTip="{DynamicResource S.CheckDuplicatesTip}"
+                                Command="{Binding CheckDuplicatesCommand}" />
+                    </WrapPanel>
+                    </Grid>
+                </Grid>
+
+                <!-- Kopfzeile nach dem Übernehmen -->
+                <Grid Grid.Row="0" Margin="24,0,24,12"
+                      Visibility="{Binding IsPlanState, Converter={StaticResource CollapsedIfTrue}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock FontSize="24" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                       Text="{DynamicResource S.Result}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Margin="0,0,8,0" Content="{DynamicResource S.Undo}"
+                                    ToolTip="{DynamicResource S.UndoTipResult}"
+                                    Visibility="{Binding CanUndoLastRun, Converter={StaticResource BoolToVis}}"
+                                    Click="UndoLastRun_Click" />
+                            <Button Style="{DynamicResource AccentButtonStyle}" Padding="20,6"
+                                    Content="{DynamicResource S.NewRun}" Command="{Binding NewRunCommand}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Margin="0,6,0,0">
+                        <TextBlock Style="{StaticResource Caption}" TextWrapping="Wrap"
+                                   Text="{DynamicResource S.Result.Hint}" />
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <WrapPanel Grid.Column="0">
+                                <Button Margin="0,0,8,6"
+                                        Content="{DynamicResource S.RecognizeRename}"
+                                        ToolTip="{DynamicResource S.RecognizeRenameTipResult}"
+                                        Command="{Binding RenameWithPeopleCommand}" />
+                                <Button Margin="0,0,8,6" Content="{DynamicResource S.CreateFolder}" Click="CreateFolder_Click" />
+                                <Button Margin="0,0,8,6" Content="{DynamicResource S.RemoveEmpty}"
+                                        Command="{Binding RemoveEmptyFoldersCommand}" />
+                            </WrapPanel>
+                            <ContentControl Grid.Column="1" VerticalAlignment="Top" Margin="12,0,0,6"
+                                            ContentTemplate="{StaticResource ThumbnailZoom}"
+                                            Content="{Binding}" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Grid.Row="1" Margin="24,0,24,0">
+                <ProgressBar Height="4" Margin="0,0,0,8" IsIndeterminate="True"
+                             Visibility="{Binding IsCheckingDuplicates, Converter={StaticResource BoolToVis}}" />
+                <TextBlock Margin="0,0,0,8" TextWrapping="Wrap"
+                           Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                           Visibility="{Binding RunError, Converter={StaticResource VisibleIfNotNull}}"
+                           Text="{Binding RunError}" />
+                <!-- Heimatzonen-Vorschlag -->
+                <Border CornerRadius="6" Padding="12,10" Margin="0,0,0,8"
+                        BorderThickness="1"
+                        BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
+                        Background="{DynamicResource SubtleFillColorSecondaryBrush}"
+                        Visibility="{Binding HomeSuggestionText, Converter={StaticResource VisibleIfNotNull}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Style="{StaticResource Glyph}"
+                                   FontSize="15" Margin="0,0,10,0"
+                                   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                   Text="&#xE80F;" />
+                        <TextBlock Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                   Text="{Binding HomeSuggestionText}" />
+                        <Button Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center"
+                                Content="{DynamicResource S.SaveHomeZone}"
+                                Click="SaveHomeSuggestion_Click" />
+                        <Button Grid.Column="3" Style="{StaticResource IconButton}" Margin="6,0,0,0"
+                                Content="&#xE711;" ToolTip="{DynamicResource S.Tip.DismissSuggestion}"
+                                Command="{Binding DismissHomeSuggestionCommand}" />
+                    </Grid>
+                </Border>
+
+                <!-- Notes and warnings. They sit above the scrolling result,
+                     so the whole block folds away and each note can be
+                     dismissed on its own. -->
+                <StackPanel Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVis}}">
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" Style="{StaticResource EditableTitle}"
+                                Cursor="Hand" Padding="6,4" Margin="-6,0,0,0"
+                                Command="{Binding ToggleWarningsCommand}"
+                                ToolTip="{DynamicResource S.Tip.ToggleWarnings}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource Glyph}" FontSize="11" Margin="0,0,8,0"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="&#xE70D;"
+                                           Visibility="{Binding WarningsExpanded, Converter={StaticResource BoolToVis}}" />
+                                <TextBlock Style="{StaticResource Glyph}" FontSize="11" Margin="0,0,8,0"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="&#xE76C;"
+                                           Visibility="{Binding WarningsExpanded, Converter={StaticResource CollapsedIfTrue}}" />
+                                <TextBlock Style="{StaticResource Glyph}" FontSize="13" Margin="0,0,8,0"
+                                           Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                           Text="&#xE7BA;" />
+                                <TextBlock VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           Text="{Binding WarningsHeader}" />
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="2" Style="{StaticResource SubtleIconButton}"
+                                Content="&#xE711;"
+                                ToolTip="{DynamicResource S.Tip.DismissAllWarnings}"
+                                Command="{Binding DismissAllWarningsCommand}" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding Warnings}"
+                                  Visibility="{Binding WarningsExpanded, Converter={StaticResource BoolToVis}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="6" Padding="10,8" Margin="0,0,0,8"
+                                        Background="{DynamicResource SystemFillColorCautionBackgroundBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" FontFamily="Segoe Fluent Icons" FontSize="13"
+                                                   Margin="0,1,8,0"
+                                                   Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                                   Text="&#xE7BA;" />
+                                        <TextBlock Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Center"
+                                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                   Text="{Binding Text}" />
+                                        <Button Grid.Column="2" Style="{StaticResource SubtleIconButton}"
+                                                Width="28" Height="26" Margin="8,0,0,0"
+                                                VerticalAlignment="Top"
+                                                Content="&#xE711;"
+                                                ToolTip="{DynamicResource S.Tip.DismissWarning}"
+                                                Command="{Binding DataContext.DismissWarningCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+                </StackPanel>
+
+                <Grid Grid.Row="2" x:Name="MarqueeLayer" ClipToBounds="True">
+                    <!-- Der ScrollViewer steckt in der Vorlage des ItemsControl
+                         und nicht darum herum: Nur so findet er das
+                         VirtualizingStackPanel als Bildlauf-Geber, und nur dann
+                         entstehen ausschließlich die sichtbaren Karten. Bei
+                         hunderten Ordnern ist das der Unterschied zwischen 390
+                         aufgebauten Karten und einer Handvoll. -->
+                    <ItemsControl x:Name="FoldersHost" Margin="24,4,24,0"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  VirtualizingPanel.ScrollUnit="Pixel"
+                                  PreviewMouseWheel="Results_PreviewMouseWheel"
+                                  PreviewMouseLeftButtonDown="ResultsSurface_MouseLeftButtonDown"
+                                  MouseMove="ResultsSurface_MouseMove"
+                                  MouseLeftButtonUp="ResultsSurface_MouseLeftButtonUp">
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl">
+                                <ScrollViewer x:Name="FoldersScroller"
+                                              VerticalScrollBarVisibility="Auto"
+                                              CanContentScroll="True"
+                                              Background="Transparent">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.Style>
+                            <Style TargetType="ItemsControl">
+                                <Setter Property="ItemsSource" Value="{Binding Folders}" />
+                                <Style.Triggers>
+                                    <!-- Umschalter auf den Ist-Zustand zum Vergleich -->
+                                    <DataTrigger Binding="{Binding ShowSourceView}" Value="True">
+                                        <Setter Property="ItemsSource" Value="{Binding SourceFolders}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ItemsControl.Style>
+                    </ItemsControl>
+                    <Canvas IsHitTestVisible="False">
+                        <Rectangle x:Name="MarqueeRect"
+                                   Visibility="Collapsed"
+                                   Fill="{DynamicResource AccentFillColorSelectedTextBackgroundBrush}"
+                                   Opacity="0.25"
+                                   Stroke="{DynamicResource AccentFillColorDefaultBrush}"
+                                   StrokeThickness="1" />
+                    </Canvas>
+                </Grid>
+
+                <TextBlock Grid.Row="3" Margin="24,10,24,0"
+                           Style="{StaticResource Caption}"
+                           Visibility="{Binding StatusMessage, Converter={StaticResource VisibleIfNotNull}}"
+                           Text="{Binding StatusMessage}" />
+            </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

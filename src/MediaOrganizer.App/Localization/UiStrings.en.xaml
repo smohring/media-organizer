@@ -1,0 +1,604 @@
+<!--
+  English interface strings. Same keys as UiStrings.de.xaml, in the same order —
+  keeping the order identical is what makes a missing translation obvious when
+  the two files are diffed side by side.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Application-wide -->
+    <s:String x:Key="S.Crash.Body">Unexpected error:&#x0a;&#x0a;{0}</s:String>
+    <s:String x:Key="S.Language.System">Follow Windows</s:String>
+    <s:String x:Key="S.Language.German">Deutsch</s:String>
+    <s:String x:Key="S.Language.English">English</s:String>
+
+    <!-- Header and navigation -->
+    <s:String x:Key="S.App.Tagline">Sort photos &amp; videos by topic</s:String>
+    <s:String x:Key="S.Nav.Organize">Organize</s:String>
+    <s:String x:Key="S.Nav.Settings">Settings</s:String>
+    <s:String x:Key="S.Settings.Intro">Set once and forget — model, video analysis and updates. What belongs to a run is on the left.</s:String>
+    <s:String x:Key="S.Nav.Knowledge">Knowledge</s:String>
+
+    <!-- Thumbnails and folder cards -->
+    <s:String x:Key="S.Thumb.ZoomTip">Images per row — also Ctrl + mouse wheel over the images</s:String>
+    <s:String x:Key="S.Thumb.PerRow">{0} per row</s:String>
+    <s:String x:Key="S.Folder.RenameTip">Click to rename</s:String>
+    <s:String x:Key="S.Folder.EmptyPlanned">Empty — will not be created when the plan is applied.</s:String>
+    <s:String x:Key="S.Folder.DeleteEmptyTip">Delete empty folder</s:String>
+    <s:String x:Key="S.Folder.OpenTip">Open folder in Explorer</s:String>
+    <s:String x:Key="S.Folder.SelectTip">Pick this folder for applying</s:String>
+    <s:String x:Key="S.Folder.CollapseTip">Hide contents</s:String>
+    <s:String x:Key="S.Folder.ExpandTip">Show contents</s:String>
+
+    <!-- Hint above the settings while a plan is open -->
+    <s:String x:Key="S.Settings.PlanOpen">A plan is open. Target folder, storage and folder names act on it at once; everything that needs a new run — grouping, model, thresholds, source folder — stays locked until then. Apply or discard the plan to change it.</s:String>
+
+    <!-- Card: folders -->
+    <s:String x:Key="S.Card.Folders">Folders</s:String>
+    <s:String x:Key="S.Field.SourceFolder">Source folder</s:String>
+    <s:String x:Key="S.Field.TargetFolder">Target folder (base folder)</s:String>
+    <s:String x:Key="S.Tip.ChooseSource">Choose source folder</s:String>
+    <s:String x:Key="S.Tip.ChooseTarget">Choose target folder</s:String>
+
+    <!-- Card: storage -->
+    <s:String x:Key="S.Card.Storage">Storage</s:String>
+    <s:String x:Key="S.Transfer.Move">Move</s:String>
+    <s:String x:Key="S.Transfer.Copy">Copy</s:String>
+    <s:String x:Key="S.Transfer.MoveHint">Files are moved out of the source folder into the target.</s:String>
+    <s:String x:Key="S.Transfer.CopyHint">The originals stay in the source folder.</s:String>
+    <s:String x:Key="S.Field.Hierarchy">Target folder hierarchy</s:String>
+    <s:String x:Key="S.Opt.Hierarchy.Flat">No extra level</s:String>
+    <s:String x:Key="S.Opt.Hierarchy.Year">Year level  (2026\…)</s:String>
+    <s:String x:Key="S.Opt.Hierarchy.YearMonth">Year + month  (2026\07\…)</s:String>
+    <s:String x:Key="S.Split.Toggle">A collecting folder per year or month</s:String>
+    <s:String x:Key="S.Split.Hint">Also applies to the everyday folder of the EXIF-only mode.</s:String>
+    <s:String x:Key="S.Field.UiLanguage">Interface language</s:String>
+    <s:String x:Key="S.Field.OutputLanguage">Language of folder names</s:String>
+    <s:String x:Key="S.Opt.Output.German">Deutsch  (20260701_Urlaub Sylt)</s:String>
+    <s:String x:Key="S.Opt.Output.English">English  (20260701_Holiday Sylt)</s:String>
+    <s:String x:Key="S.Dlg.BrowseSource">Choose the source folder</s:String>
+    <s:String x:Key="S.Dlg.BrowseTarget">Choose the target folder (base folder)</s:String>
+
+    <!-- Hints built in code (MainViewModel) -->
+    <s:String x:Key="S.Hint.OutputLanguage.En">Folder names and descriptions are produced in English. Shots already analysed in German stay in the cache — switching back finds them again.</s:String>
+    <s:String x:Key="S.Hint.OutputLanguage.De">Folder names and descriptions are produced in German. The interface language is unaffected.</s:String>
+    <s:String x:Key="S.Hint.Mode.ExifOnly">Place and time only: folders "date_place", home zone into the everyday folder, no GPS into the collecting folder. Minutes instead of hours.</s:String>
+    <s:String x:Key="S.Hint.Mode.Combined">Recommended: place and time form the groups, the model splits by content and checks every boundary.</s:String>
+    <s:String x:Key="S.Hint.MinItems.Off">Every group gets a folder — even one holding a single shot.</s:String>
+    <s:String x:Key="S.Hint.MinItems.On">Smaller groups go to the collecting folder.</s:String>
+    <s:String x:Key="S.Hint.GpsRadius.Off">Off — no cut into places.</s:String>
+    <s:String x:Key="S.Hint.GpsRadius.On">Closer than this counts as the same place. Keeps the drive home out of the outing's folder.</s:String>
+    <s:String x:Key="S.Hint.RegionMerge.Off">Off — every subgroup becomes its own folder.</s:String>
+    <s:String x:Key="S.Hint.RegionMerge.On">Stages of one outing grow back together — only away from home, never at everyday places.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.Flat">No effect without a hierarchy: with no extra level there is nothing for a folder per year to sit in.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.Off">One "{0}" for the whole collection, beside the year levels.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.Year">2026\{0} — one per year, inside the year level.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.YearMonth">2026\07\{0} — one per month, inside the month level.</s:String>
+    <s:String x:Key="S.Hint.Parallel.Serial">One request after another — the slowest, but the gentlest.</s:String>
+    <s:String x:Key="S.Hint.Parallel.Concurrent">{0} images at a time — same results, just faster. Very high values cost video memory.</s:String>
+
+    <!-- Validation before a run can start -->
+    <s:String x:Key="S.Block.NoSource">Please choose a source folder that exists.</s:String>
+    <s:String x:Key="S.Block.NoTarget">Please choose a target folder (base folder).</s:String>
+    <s:String x:Key="S.Block.SameFolder">The source and target folder must not be the same.</s:String>
+    <s:String x:Key="S.Block.OllamaOffline">Ollama cannot be reached — start it, or choose the "EXIF only" mode.</s:String>
+    <s:String x:Key="S.Block.ModelMissing">The chosen model is not installed yet — please download it.</s:String>
+
+    <!-- Phase titles during a run -->
+    <s:String x:Key="S.Phase.Prepare">Preparing</s:String>
+    <s:String x:Key="S.Phase.Scan">Scanning the source folder</s:String>
+    <s:String x:Key="S.Phase.Metadata">Reading metadata</s:String>
+    <s:String x:Key="S.Phase.Analyze">Analysing images</s:String>
+    <s:String x:Key="S.Phase.Group">Grouping shots</s:String>
+    <s:String x:Key="S.Phase.Name">Finding folder names</s:String>
+    <s:String x:Key="S.Phase.Plan">Assembling the preview</s:String>
+    <s:String x:Key="S.Phase.Verify">Checking for duplicates</s:String>
+    <s:String x:Key="S.Phase.Copy">Copying files</s:String>
+    <s:String x:Key="S.Phase.Move">Moving files</s:String>
+    <s:String x:Key="S.Phase.Undo">Undoing the run</s:String>
+    <s:String x:Key="S.Phase.Done">Done</s:String>
+
+    <!-- Progress line during a run. Reported by the core as a key plus its
+         arguments (Models/ProgressKeys.cs), because a run started in one
+         language may be read in another. -->
+    <s:String x:Key="S.Progress.Scanning">Searching the source folder …</s:String>
+    <s:String x:Key="S.Progress.ReadingMetadata">Reading metadata ({0}/{1}) …</s:String>
+    <s:String x:Key="S.Progress.RecognizingFaces">Face recognition {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.DistillingKnowledge">Updating the knowledge base …</s:String>
+    <s:String x:Key="S.Progress.LoadingModel">Loading the analysis model …</s:String>
+    <s:String x:Key="S.Progress.Analyzing">Analysing {0} ({1}/{2}) …</s:String>
+    <s:String x:Key="S.Progress.AnalysisDone">Analysis finished</s:String>
+    <s:String x:Key="S.Progress.GroupingByTimeAndGps">Grouping by time &amp; GPS …</s:String>
+    <s:String x:Key="S.Progress.GroupingByTopic">Grouping by topic {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.SceneVectors">Preparing image comparison {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.ReadingNotes">Reading notes {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.FindingDuplicates">Looking for duplicates {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.Rescuing">Placing shots from the collecting folder {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.CheckingBoundaries">Checking group boundaries {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.GroupsFormed">{0} groups formed</s:String>
+    <s:String x:Key="S.Progress.NamingGroup">Naming group {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.NamingDone">Naming finished</s:String>
+    <s:String x:Key="S.Progress.BuildingPlan">Assembling the preview …</s:String>
+    <s:String x:Key="S.Progress.PlanReady">Preview ready</s:String>
+    <s:String x:Key="S.Progress.CheckingDuplicate">Checking {0} ({1}/{2}) …</s:String>
+    <s:String x:Key="S.Progress.DuplicateCheckDone">Check finished</s:String>
+    <s:String x:Key="S.Progress.Moving">Moving {0} …</s:String>
+    <s:String x:Key="S.Progress.Copying">Copying {0} …</s:String>
+    <s:String x:Key="S.Progress.Restoring">Restoring ({0}/{1}) …</s:String>
+    <s:String x:Key="S.Progress.ReadingSourceStructure">Reading the existing structure ({0}/{1}) …</s:String>
+    <s:String x:Key="S.Progress.SourceStructureRead">Existing structure read</s:String>
+    <s:String x:Key="S.Progress.Done">Finished</s:String>
+
+    <!-- Setup and maintenance, likewise reported by the core as a key
+         (Models/StatusReport.cs) -->
+    <s:String x:Key="S.Setup.DownloadingFile">Downloading {0} …</s:String>
+    <s:String x:Key="S.Setup.DownloadingUpdate">Downloading the update … {0} of {1} MB</s:String>
+    <s:String x:Key="S.Setup.VerifyingDownload">Verifying the download …</s:String>
+    <s:String x:Key="S.Setup.ArchiveAlreadyThere">Archive already downloaded</s:String>
+    <s:String x:Key="S.Setup.Unpacking">Unpacking …</s:String>
+    <s:String x:Key="S.Setup.UpdateReady">Update ready to install</s:String>
+    <s:String x:Key="S.Setup.RunsFromDriveRoot">Media Organizer is running from a drive root. Move it into its own folder so that it can update itself.</s:String>
+    <s:String x:Key="S.Setup.NotAnApplicationFolder">The application directory does not look like a Media Organizer folder.</s:String>
+    <s:String x:Key="S.Setup.FolderNotWritable">Media Organizer cannot write to its own folder ({0}). Move it somewhere writable, or download the new version by hand.</s:String>
+
+    <!-- Cache -->
+    <s:String x:Key="S.Cache.ClearFailed">The analysis cache could not be cleared (file in use?).</s:String>
+    <s:String x:Key="S.Cache.AlreadyEmpty">The analysis cache was already empty.</s:String>
+    <s:String x:Key="S.Cache.Cleared">Discarded {0} stored description(s){1}. The next run analyses every shot again, which takes accordingly long.</s:String>
+    <s:String x:Key="S.Cache.ClearedFaces">, plus the faces of {0} shot(s)</s:String>
+
+    <!-- Status messages -->
+    <s:String x:Key="S.Msg.OllamaChecking">Checking the connection …</s:String>
+    <s:String x:Key="S.Msg.OllamaOnline">Ollama reachable</s:String>
+    <s:String x:Key="S.Msg.OllamaOffline">Ollama unreachable</s:String>
+    <s:String x:Key="S.Msg.FaceModelsInstalled">Recognition models installed</s:String>
+    <s:String x:Key="S.Msg.FfmpegInstalling">Installing ffmpeg through winget …</s:String>
+    <s:String x:Key="S.Msg.FfmpegInstalled">Installed: {0}</s:String>
+    <s:String x:Key="S.Msg.PullStarting">Starting download of {0} …</s:String>
+    <s:String x:Key="S.Msg.FaceModelsMissing">Models not installed (~{0} MB)</s:String>
+    <s:String x:Key="S.Msg.FaceModelsNotInstalled">The recognition models are not installed yet — see the settings.</s:String>
+    <s:String x:Key="S.Msg.FaceUnavailable">Face recognition unavailable: {0}</s:String>
+    <s:String x:Key="S.Msg.FfmpegFound">ffmpeg available — videos are analysed by content</s:String>
+    <s:String x:Key="S.Msg.FfmpegMissing">ffmpeg missing — videos only via the Windows thumbnail</s:String>
+    <s:String x:Key="S.Msg.WingetMissing">winget not found — please install ffmpeg by hand.</s:String>
+    <s:String x:Key="S.Msg.FfmpegStillMissing">Installation finished, but ffmpeg was not found.</s:String>
+    <s:String x:Key="S.Msg.ZoneSaved">Home zone "{0}" saved — it takes effect from the next run.</s:String>
+    <s:String x:Key="S.Msg.NoteUnreadable">The note could not be saved (file not readable).</s:String>
+    <s:String x:Key="S.Msg.NoteRemoved">Note removed from "{0}".</s:String>
+    <s:String x:Key="S.Msg.NoteSaved">Note pinned to "{0}" — it feeds into analysis and naming from the next run.</s:String>
+    <s:String x:Key="S.Msg.DescriptionRemoved">Description of {0} removed.</s:String>
+    <s:String x:Key="S.Msg.DescriptionChanged">Description of {0} changed.</s:String>
+    <s:String x:Key="S.Msg.CacheOffSuffix"> The analysis cache is off — a new run will produce the description again.</s:String>
+    <s:String x:Key="S.Msg.RunCancelled">Run cancelled. Nothing was written.</s:String>
+    <s:String x:Key="S.Msg.SourceViewHint">This is how the files sit in the source folder today. Nothing has been changed.</s:String>
+    <s:String x:Key="S.Msg.PlanViewHint">Nothing is written yet. Double-click opens the preview · click/Ctrl/Shift or a rubber band to select · drag and drop assigns a file to another folder.</s:String>
+    <s:String x:Key="S.Msg.SourceUnreadable">Current state not readable: {0}</s:String>
+    <s:String x:Key="S.Msg.SourceEmpty">No photos or videos found in the source folder.</s:String>
+    <s:String x:Key="S.Msg.SourceSummary">{0} folders, {1} file(s) — this is the source folder as it is today.</s:String>
+    <s:String x:Key="S.Msg.PlanSummary">{0} folders ({1} new), {2} file(s): {3} {4}</s:String>
+    <s:String x:Key="S.Msg.PlanEmptyFolders"> · {0} empty folder(s) will not be created</s:String>
+    <s:String x:Key="S.Msg.PlanNoFiles">The plan holds no files — there is nothing to apply.</s:String>
+    <s:String x:Key="S.Msg.PlanApplied">{0} file(s) moved into {1} folders.</s:String>
+    <s:String x:Key="S.Msg.PlanDiscarded">Plan discarded — nothing was written.</s:String>
+    <s:String x:Key="S.Msg.NoCollisions">No name collisions in the plan — there is nothing to check.</s:String>
+    <s:String x:Key="S.Msg.NoDuplicates">No identical duplicate found — every name collision will be renamed.</s:String>
+    <s:String x:Key="S.Msg.DuplicatesFound">{0} identical duplicate(s) found — these are skipped, and the source files stay untouched.</s:String>
+    <s:String x:Key="S.Msg.UndoCopies">{0} copy/copies created in the target will be deleted — but only where the original is demonstrably unchanged at its origin.</s:String>
+    <s:String x:Key="S.Msg.UndoMoves">{0} file(s) will be moved from the target folder back to where they came from. Existing files are never overwritten in the process.</s:String>
+    <s:String x:Key="S.Msg.UndoQuestion">Undo the run of {0}?</s:String>
+    <s:String x:Key="S.Msg.UndoRemovesEmpty">Empty folders created during the run will be removed.</s:String>
+    <s:String x:Key="S.Msg.UndoRemovedDirs">{0} empty folder(s) removed</s:String>
+    <s:String x:Key="S.Msg.UndoCancelled">Undo cancelled — the part already taken back stays taken back.</s:String>
+    <s:String x:Key="S.Msg.AlreadyThere">"{0}" already exists in "{1}" with identical content — not moved.</s:String>
+    <s:String x:Key="S.Msg.FolderExists">That folder already exists.</s:String>
+    <s:String x:Key="S.Msg.FolderPlanned">Folder "{0}" added to the plan — drag files into it, or it will be skipped when the plan is applied.</s:String>
+    <s:String x:Key="S.Msg.FolderCreateFailed">The folder could not be created: {0}</s:String>
+    <s:String x:Key="S.Msg.FolderCreated">Folder "{0}" created.</s:String>
+    <s:String x:Key="S.Msg.OnlyEmptyDeletable">Only empty folders can be deleted.</s:String>
+    <s:String x:Key="S.Msg.FolderRemovedFromPlan">Folder "{0}" removed from the plan.</s:String>
+    <s:String x:Key="S.Msg.FolderNotEmpty">"{0}" still holds files — not deleted.</s:String>
+    <s:String x:Key="S.Msg.EmptyFolderDeleted">Empty folder "{0}" deleted.</s:String>
+    <s:String x:Key="S.Msg.FolderNotYet">"{0}" is only created when you apply — there is nothing to open yet.</s:String>
+    <s:String x:Key="S.Msg.NoEmptyInPlan">No empty folders in the plan.</s:String>
+    <s:String x:Key="S.Msg.EmptyRemovedFromPlan">{0} empty folder(s) removed from the plan.</s:String>
+    <s:String x:Key="S.Msg.NoEmptyFound">No empty folders found.</s:String>
+    <s:String x:Key="S.Msg.EmptyDeleted">{0} empty folder(s) deleted.</s:String>
+    <s:String x:Key="S.Msg.MovedOne">"{0}" will be filed into "{1}".</s:String>
+    <s:String x:Key="S.Msg.MovedMany">{0} files will be filed into "{1}".</s:String>
+    <s:String x:Key="S.Msg.NoPeopleKnown">No people are on record — assign some faces first.</s:String>
+    <s:String x:Key="S.Phase.RecognizePeople">Recognising people</s:String>
+    <s:String x:Key="S.Msg.NoPeopleRecognized">None of the people on record was recognised — folder names unchanged.</s:String>
+    <s:String x:Key="S.Msg.RecognizedAndRenamed">{0} file(s) with recognised people, {1} folders renamed.</s:String>
+    <s:String x:Key="S.Msg.RenameTakenInPlan">Cannot rename: "{0}" is already taken in the plan.</s:String>
+    <s:String x:Key="S.Msg.RenamedInPlan">The folder is now called "{0}" in the plan.</s:String>
+    <s:String x:Key="S.Msg.RenameTaken">Cannot rename: "{0}" already exists.</s:String>
+    <s:String x:Key="S.Msg.Renamed">Folder renamed to "{0}".</s:String>
+    <s:String x:Key="S.Msg.HomeSuggestion">{0} shots were taken near {1}. Is that a home location (say "Home")? Photos there will then be named after their content rather than after the place.</s:String>
+    <s:String x:Key="S.Msg.SubjectFiles">{0} shots</s:String>
+    <s:String x:Key="S.Verb.Copy">to copy</s:String>
+    <s:String x:Key="S.Verb.Move">to move</s:String>
+    <s:String x:Key="S.View.Current">Current state</s:String>
+    <s:String x:Key="S.View.Plan">Preview</s:String>
+    <s:String x:Key="S.CreateFolderTip">Create an empty target folder and drag shots into it</s:String>
+    <s:String x:Key="S.Msg.PlanDuplicates">, {0} duplicate(s) to skip</s:String>
+    <s:String x:Key="S.Msg.PlanConflicts">, {0} to rename</s:String>
+    <s:String x:Key="S.Msg.UndoRestored">{0} moved back</s:String>
+    <s:String x:Key="S.Msg.UndoDeleted">{0} copy/copies removed</s:String>
+    <s:String x:Key="S.Msg.UndoSkipped">{0} skipped</s:String>
+    <s:String x:Key="S.Msg.UndoFailed">{0} failed</s:String>
+    <s:String x:Key="S.Msg.UndoNothing">There was nothing to take back.</s:String>
+    <s:String x:Key="S.Msg.UndoDone">Undone: {0}.</s:String>
+    <s:String x:Key="S.Msg.UndoError">Undo failed: {0}</s:String>
+    <s:String x:Key="S.Msg.DupCheckCancelled">Duplicate check cancelled.</s:String>
+    <s:String x:Key="S.Msg.DupCheckFailed">Duplicate check failed: {0}</s:String>
+    <s:String x:Key="S.Msg.PullDone">{0} downloaded.</s:String>
+    <s:String x:Key="S.Msg.PullCancelled">Download cancelled.</s:String>
+    <s:String x:Key="S.Msg.DownloadStarting">Starting download …</s:String>
+    <s:String x:Key="S.Msg.DownloadDetail">{0} ({1:P0})</s:String>
+    <s:String x:Key="S.Msg.DownloadFailed">Download failed: {0}</s:String>
+    <s:String x:Key="S.Msg.FaceModelsReady">Models ready.</s:String>
+    <s:String x:Key="S.Msg.InstallFailed">Installation failed: {0}</s:String>
+    <s:String x:Key="S.Msg.ReadingSource">Reading the existing structure …</s:String>
+    <s:String x:Key="S.Msg.FileMoved">"{0}" moved to "{1}".</s:String>
+    <s:String x:Key="S.Msg.FilesMoved">{0} files moved to "{1}".</s:String>
+    <s:String x:Key="S.Msg.MoveFailed">Moving failed: {0}</s:String>
+    <s:String x:Key="S.Msg.DeleteFailed">Deleting failed: {0}</s:String>
+    <s:String x:Key="S.Msg.RenameFailed">Renaming failed: {0}</s:String>
+    <s:String x:Key="S.Msg.FaceProgress">Face recognition {0}/{1} …</s:String>
+    <s:String x:Key="S.Msg.NamingFolder">Naming {0} …</s:String>
+    <s:String x:Key="S.Msg.OperationCancelled">Operation cancelled.</s:String>
+    <s:String x:Key="S.Msg.OperationFailed">Failed: {0}</s:String>
+    <s:String x:Key="S.Msg.PersonRemoved">Person "{0}" removed.</s:String>
+    <s:String x:Key="S.Phase.UpdateFolderNames">Update folder names</s:String>
+
+    <!-- Context menus and dialogs -->
+    <s:String x:Key="S.Menu.OpenPreview">Open preview</s:String>
+    <s:String x:Key="S.Menu.AssignPeople">Assign people …</s:String>
+    <s:String x:Key="S.Menu.EditNote">Edit note …</s:String>
+    <s:String x:Key="S.Menu.AddNote">Add note …</s:String>
+    <s:String x:Key="S.Menu.EditDescription">Edit description …</s:String>
+    <s:String x:Key="S.Menu.AddDescription">Add description …</s:String>
+    <s:String x:Key="S.Menu.DeleteDescriptions">Delete descriptions ({0})</s:String>
+    <s:String x:Key="S.Menu.DeleteDescription">Delete description</s:String>
+    <s:String x:Key="S.Menu.MoveSelection">Move selection ({0}) to</s:String>
+    <s:String x:Key="S.Menu.MoveTo">Move to</s:String>
+    <s:String x:Key="S.Menu.NewTargetFolder">New target folder …</s:String>
+    <s:String x:Key="S.Menu.RemoveReferenceFace">Remove reference face</s:String>
+    <s:String x:Key="S.Menu.AssignTo">Assign to</s:String>
+    <s:String x:Key="S.Menu.RemoveOrphans">Remove orphaned</s:String>
+
+    <s:String x:Key="S.Dlg.NoteTitle">Image note</s:String>
+    <s:String x:Key="S.Dlg.NoteHeader">Note on "{0}"</s:String>
+    <s:String x:Key="S.Dlg.NoteBody">Hints such as "my daughter Mia playing" feed into analysis and naming, and are taken into the knowledge base. Leave empty to remove.</s:String>
+    <s:String x:Key="S.Dlg.DescriptionTitle">Image description</s:String>
+    <s:String x:Key="S.Dlg.DescriptionHeader">Description of "{0}"</s:String>
+    <s:String x:Key="S.Dlg.DescriptionBody">Written into the image file when the plan is applied, if that option is on. Leave empty to remove.</s:String>
+    <s:String x:Key="S.Dlg.NewFolderTitle">New target folder</s:String>
+    <s:String x:Key="S.Dlg.NewFolderHeader">Topic for the new folder</s:String>
+    <s:String x:Key="S.Dlg.NewFolderBody">The date of the first shot is prefixed automatically (for example 20260701_Holiday Sylt).</s:String>
+    <s:String x:Key="S.Dlg.CreateFolderTitle">Create a new folder</s:String>
+    <s:String x:Key="S.Dlg.CreateFolderHeader">Topic of the new folder</s:String>
+    <s:String x:Key="S.Dlg.CreateFolderBody">The folder is created empty, with today's date prefixed. You can then drag images into it.</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneTitle">Save home zone</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneHeader">Name of the home zone</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneBody">Shots taken there will be named after their content rather than after the place.</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneDefault">Home</s:String>
+    <s:String x:Key="S.Dlg.PersonTitle">Add a person</s:String>
+    <s:String x:Key="S.Dlg.PersonNameHeader">Name of the person</s:String>
+    <s:String x:Key="S.Dlg.PersonNameBody">For example "Mia". You assign faces afterwards from the result view.</s:String>
+    <s:String x:Key="S.Dlg.PersonRelationHeader">Relationship to {0} (optional)</s:String>
+    <s:String x:Key="S.Dlg.PersonRelationBody">For example "daughter", "wife", "grandad" — feeds into naming as context.</s:String>
+    <s:String x:Key="S.Dlg.FactAddTitle">Add a fact</s:String>
+    <s:String x:Key="S.Dlg.FactAddHeader">New knowledge base fact</s:String>
+    <s:String x:Key="S.Dlg.FactAddBody">Phrase it briefly and lastingly, for example "Mia is our daughter (toddler, born 2024)".</s:String>
+    <s:String x:Key="S.Dlg.FactEditTitle">Edit fact</s:String>
+    <s:String x:Key="S.Dlg.FactEditHeader">Fact</s:String>
+    <s:String x:Key="S.Dlg.FactEditBody">Leaving it empty removes the fact.</s:String>
+    <s:String x:Key="S.Dlg.NoteEditTitle">Edit note</s:String>
+    <s:String x:Key="S.Dlg.NoteEditBody">Leaving it empty removes the note.</s:String>
+    <s:String x:Key="S.Btn.Save">Save</s:String>
+    <s:String x:Key="S.Btn.Create">Create</s:String>
+    <s:String x:Key="S.Btn.Add">Create</s:String>
+    <s:String x:Key="S.Btn.AddFact">Add</s:String>
+    <s:String x:Key="S.Btn.Next">Next</s:String>
+
+    <!-- Knowledge view -->
+    <s:String x:Key="S.Know.ModelsMissing">The recognition models are missing — download them in the settings.</s:String>
+    <s:String x:Key="S.Know.PeopleSaved">People saved.</s:String>
+    <s:String x:Key="S.Know.PersonUpdated">Person updated.</s:String>
+    <s:String x:Key="S.Know.ReferenceFaces">{0} reference face(s)</s:String>
+    <s:String x:Key="S.Know.ReferenceFacesWithRelation">{0} · {1} reference face(s)</s:String>
+    <s:String x:Key="S.Know.ZoneHome">Home</s:String>
+    <s:String x:Key="S.Know.ZoneVacation">Holiday place</s:String>
+    <s:String x:Key="S.Know.ZoneSubtitle">{0} · {1} · radius {2} km</s:String>
+    <s:String x:Key="S.Know.NearPlace">near {0}</s:String>
+    <s:String x:Key="S.Know.Summary">{0} person(s) · {1} fact(s) · {2} home zone(s) · {3} note(s)</s:String>
+    <s:String x:Key="S.Know.ZoneOther">Place</s:String>
+    <s:String x:Key="S.Know.ZoneSaved">Zone "{0}" saved.</s:String>
+    <s:String x:Key="S.Know.ZoneRemoved">Home zone "{0}" removed.</s:String>
+    <s:String x:Key="S.Know.PersonSaved">Person "{0}" saved.</s:String>
+    <s:String x:Key="S.Know.FaceMoved">Face moved to "{0}".</s:String>
+    <s:String x:Key="S.Know.FaceRemoved">Reference face removed.</s:String>
+    <s:String x:Key="S.Know.FactAdded">Fact added.</s:String>
+    <s:String x:Key="S.Know.FactRemoved">Fact removed.</s:String>
+    <s:String x:Key="S.Know.FactUpdated">Fact updated.</s:String>
+    <s:String x:Key="S.Know.NoteRemoved">Note removed.</s:String>
+    <s:String x:Key="S.Know.NoteUpdated">Note updated.</s:String>
+    <s:String x:Key="S.Know.NoDistilled">There are no notes that have already been evaluated.</s:String>
+    <s:String x:Key="S.Know.Released">{0} note(s) will be evaluated again on the next run. Existing facts remain.</s:String>
+    <s:String x:Key="S.Know.NoNotes">There are no notes.</s:String>
+    <s:String x:Key="S.Know.NotesRemoved">{0} note(s) removed. The facts drawn from them remain.</s:String>
+
+    <!-- Knowledge view (XAML) -->
+    <s:String x:Key="S.KV.Title">Knowledge</s:String>
+    <s:String x:Key="S.KV.Intro">Lasting knowledge that feeds into every run: recognised people, general facts, home zones and notes pinned to individual images.</s:String>
+    <s:String x:Key="S.KV.PeopleTitle">People (face recognition)</s:String>
+    <s:String x:Key="S.KV.PeopleIntro">The more reference faces per person, the more reliable the recognition under different light, angle or age.</s:String>
+    <s:String x:Key="S.KV.LearnFromFolder">Learn from a folder …</s:String>
+    <s:String x:Key="S.KV.LearnFromFolderTip">Scans a folder, clusters all faces by person and lets you name each one once.</s:String>
+    <s:String x:Key="S.KV.AddPerson">Add a person …</s:String>
+    <s:String x:Key="S.KV.DoubleClickToEdit">Double-click to edit</s:String>
+    <s:String x:Key="S.KV.FaceTip">Right-click: remove, or assign to a different person</s:String>
+    <s:String x:Key="S.KV.EditPersonTip">Edit name and relationship, or merge</s:String>
+    <s:String x:Key="S.KV.DeletePersonTip">Delete person</s:String>
+    <s:String x:Key="S.KV.NoPeople">No people yet. Add one and assign faces to them — quickest by right-clicking a photo in the result view ("Assign people …").</s:String>
+    <s:String x:Key="S.KV.FactsTitle">General facts</s:String>
+    <s:String x:Key="S.KV.FactsIntro">Sent along as context on every call — keep them short and lastingly true.</s:String>
+    <s:String x:Key="S.KV.AddFact">Add a fact …</s:String>
+    <s:String x:Key="S.KV.EditFactTip">Edit fact</s:String>
+    <s:String x:Key="S.KV.RemoveFactTip">Remove fact</s:String>
+    <s:String x:Key="S.KV.NoFacts">No facts on record yet.</s:String>
+    <s:String x:Key="S.KV.ZonesTitle">Places &amp; zones</s:String>
+    <s:String x:Key="S.KV.ZonesIntro">Home means everyday life: different activities there stay separate events, and the place does not appear in the folder name. Holiday places and other places count as being away. Click a zone to edit it.</s:String>
+    <s:String x:Key="S.KV.AddZone">Add a zone …</s:String>
+    <s:String x:Key="S.KV.ClickToEdit">Click to edit</s:String>
+    <s:String x:Key="S.KV.EditZoneTip">Edit zone</s:String>
+    <s:String x:Key="S.KV.RemoveZoneTip">Remove zone</s:String>
+    <s:String x:Key="S.KV.NoZones">No zones on record yet. "Add a zone …" suggests the places you photograph most.</s:String>
+    <s:String x:Key="S.KV.NotesTitle">Image notes</s:String>
+    <s:String x:Key="S.KV.NotesIntro">Image and note live in the user data, independent of the source folder. They are matched by file content — moving and renaming change nothing. Double-click to edit.</s:String>
+    <s:String x:Key="S.KV.Redistill">Evaluate again</s:String>
+    <s:String x:Key="S.KV.RedistillTip">Releases every note so the next run draws facts from them again. Existing facts remain.</s:String>
+    <s:String x:Key="S.KV.RemoveAll">Remove all</s:String>
+    <s:String x:Key="S.KV.RemoveAllTip">Removes every image note. The facts drawn from them remain.</s:String>
+    <s:String x:Key="S.KV.RemoveNote">Remove note</s:String>
+    <s:String x:Key="S.KV.NoNotes">No notes yet. Right-click an image in the result view → "Add note".</s:String>
+
+    <!-- Zone dialog -->
+    <s:String x:Key="S.Zone.TitleNew">Add a zone</s:String>
+    <s:String x:Key="S.Zone.TitleEdit">Edit zone</s:String>
+    <s:String x:Key="S.Zone.Intro">A zone gives a place a name for the analysis. Home means everyday life — different activities there stay separate events, and the place does not appear in the folder name.</s:String>
+    <s:String x:Key="S.Zone.Name">Name</s:String>
+    <s:String x:Key="S.Zone.Kind">Kind</s:String>
+    <s:String x:Key="S.Zone.Radius">Radius (km)</s:String>
+    <s:String x:Key="S.Zone.RadiusHint">Shots within this radius belong to the zone. 0.7 km suits a house; larger values suit a holiday site.</s:String>
+    <s:String x:Key="S.Zone.Position">Position</s:String>
+    <s:String x:Key="S.Zone.PositionHint">Chosen from your own shots, the position lands exactly on the centre of the photos. You can also enter coordinates directly.</s:String>
+    <s:String x:Key="S.Zone.SuggestionSummary">{0} shot(s) on {1} occasion(s) · {2}, {3}</s:String>
+    <s:String x:Key="S.Zone.NoSuggestions">No place suggestions available — read a source folder first, and your most frequent locations appear here.</s:String>
+    <s:String x:Key="S.Zone.SuggestionsLabel">Or take one of your most frequent locations</s:String>
+    <s:String x:Key="S.Zone.SearchingSuggestions">Looking for your most frequent locations …</s:String>
+    <s:String x:Key="S.Zone.Latitude">Latitude</s:String>
+    <s:String x:Key="S.Zone.Longitude">Longitude</s:String>
+    <s:String x:Key="S.Zone.KindHome">Home — everyday life, not an outing</s:String>
+    <s:String x:Key="S.Zone.KindVacation">Holiday place — counts as being away</s:String>
+    <s:String x:Key="S.Zone.KindPlace">Other place — counts as being away</s:String>
+    <s:String x:Key="S.Zone.NeedName">Please give the zone a name.</s:String>
+    <s:String x:Key="S.Zone.BadLatitude">Latitude must be a number between -90 and 90.</s:String>
+    <s:String x:Key="S.Zone.BadLongitude">Longitude must be a number between -180 and 180.</s:String>
+    <s:String x:Key="S.Zone.BadRadius">Radius must be a number between 0 and 200 km.</s:String>
+
+    <!-- Person dialog -->
+    <s:String x:Key="S.Person.Title">Edit person</s:String>
+    <s:String x:Key="S.Person.Name">Name</s:String>
+    <s:String x:Key="S.Person.Relation">Relationship (optional)</s:String>
+    <s:String x:Key="S.Person.RelationHint">For example "daughter", "wife", "grandad" — feeds into descriptions and folder names as context.</s:String>
+    <s:String x:Key="S.Person.MergeLabel">Merge with another person</s:String>
+    <s:String x:Key="S.Person.MergeHint">Takes every reference face of this person over into the chosen one and then deletes this person. Useful when the automatic clustering found the same person twice.</s:String>
+    <s:String x:Key="S.Person.MergeButton">Merge</s:String>
+    <s:String x:Key="S.Person.MergeConfirm">All {0} reference face(s) of "{1}" will be assigned to "{2}", and "{1}" removed.&#x0a;&#x0a;Continue?</s:String>
+    <s:String x:Key="S.Person.MergeTitle">Merge people</s:String>
+    <s:String x:Key="S.Person.FaceCount">{0} reference face(s) stored</s:String>
+
+    <!-- Face learning -->
+    <s:String x:Key="S.Learn.Title">Learn faces</s:String>
+    <s:String x:Key="S.Learn.Heading">Learn faces from a folder</s:String>
+    <s:String x:Key="S.Learn.Intro">Every face is found and clustered by person — you name each person once. Best done before the first sorting run.</s:String>
+    <s:String x:Key="S.Learn.ChooseFolder">Choose folder …</s:String>
+    <s:String x:Key="S.Learn.Scan">Scan the folder</s:String>
+    <s:String x:Key="S.Learn.Close">Close</s:String>
+    <s:String x:Key="S.Learn.SaveNames">Save names</s:String>
+    <s:String x:Key="S.Learn.PickFolder">Choose a folder with photos</s:String>
+    <s:String x:Key="S.Learn.NeedFolder">Please choose a folder that exists.</s:String>
+    <s:String x:Key="S.Learn.Scanning">Scanning {0}/{1} — {2}</s:String>
+    <s:String x:Key="S.Learn.EnterName">Enter a name — leaving it empty skips this person.</s:String>
+    <s:String x:Key="S.Learn.AlreadyKnown">Already known as {0} — further references will be added.</s:String>
+    <s:String x:Key="S.Learn.NothingFound">No recurring faces found.</s:String>
+    <s:String x:Key="S.Learn.Found">{0} person(s) recognised — give them names and save.</s:String>
+    <s:String x:Key="S.Learn.ShotCount">{0} shots of this person</s:String>
+    <s:String x:Key="S.Learn.ScanFailed">Scanning failed: {0}</s:String>
+
+    <!-- Face assignment -->
+    <s:String x:Key="S.Assign.Title">Assign people</s:String>
+    <s:String x:Key="S.Assign.PersonName">Name of the person</s:String>
+    <s:String x:Key="S.Assign.Save">Assign &amp; remember</s:String>
+    <s:String x:Key="S.Assign.Failed">Face recognition failed: {0}</s:String>
+    <s:String x:Key="S.Assign.NoFace">No face was found in this image.</s:String>
+    <s:String x:Key="S.Assign.Unknown">Not known yet — enter a name or pick one from the list.</s:String>
+    <s:String x:Key="S.Assign.Suggestion">Suggestion: {0}</s:String>
+    <s:String x:Key="S.Assign.Similarity">Similarity {0}</s:String>
+    <s:String x:Key="S.Assign.FoundOne">1 face found. Enter the name — on the next run the person is recognised automatically.</s:String>
+    <s:String x:Key="S.Assign.FoundMany">{0} faces found. Enter the names — on the next run they are recognised automatically.</s:String>
+    <s:String x:Key="S.Viewer.TakenWithGps">Taken: {0}   ·   GPS {1}</s:String>
+
+    <!-- Media viewer -->
+    <s:String x:Key="S.Viewer.Title">Preview</s:String>
+    <s:String x:Key="S.Viewer.Previous">Previous (left arrow)</s:String>
+    <s:String x:Key="S.Viewer.Next">Next (right arrow)</s:String>
+    <s:String x:Key="S.Viewer.Play">Play</s:String>
+    <s:String x:Key="S.Viewer.Pause">Pause</s:String>
+    <s:String x:Key="S.Viewer.Volume">Volume</s:String>
+    <s:String x:Key="S.Viewer.Mute">Mute</s:String>
+    <s:String x:Key="S.Viewer.Unmute">Unmute</s:String>
+    <s:String x:Key="S.Viewer.NoCodec">Windows cannot play this video without an extra codec. Install ffmpeg (in the settings) and it will be shown here directly.</s:String>
+    <s:String x:Key="S.Viewer.PlaybackFailed">The video cannot be played: {0}</s:String>
+    <s:String x:Key="S.Viewer.DecodeFailed">The video could not be decoded ({0}).</s:String>
+    <s:String x:Key="S.Viewer.DecodeFailedDetail">The video could not be decoded ({0}): {1}</s:String>
+    <s:String x:Key="S.Viewer.PlayFailed">Playback failed: {0}</s:String>
+    <s:String x:Key="S.Viewer.NoAudioTrack">no audio track</s:String>
+    <s:String x:Key="S.Viewer.FfmpegStartFailed">ffmpeg could not be started.</s:String>
+
+    <!-- Tile tooltips -->
+    <s:String x:Key="S.Tile.Taken">Taken: {0}</s:String>
+    <s:String x:Key="S.Tile.WillCopy">Will be copied.</s:String>
+    <s:String x:Key="S.Tile.WillMove">Will be moved.</s:String>
+    <s:String x:Key="S.Tile.NameConflict">Name collision in the target.</s:String>
+    <s:String x:Key="S.Tile.PlannedDuplicate">Duplicate — will be skipped.</s:String>
+    <s:String x:Key="S.Tile.Skipped">Skipped: an identical file was already in the target.</s:String>
+    <s:String x:Key="S.Tile.Error">Error: {0}</s:String>
+    <s:String x:Key="S.Tile.Note">Note: {0}</s:String>
+    <s:String x:Key="S.Folder.New">new</s:String>
+    <s:String x:Key="S.Folder.Exists">already exists</s:String>
+    <s:String x:Key="S.Folder.FileCountOne">{0} file</s:String>
+    <s:String x:Key="S.Folder.FileCountMany">{0} files</s:String>
+    <s:String x:Key="S.Folder.ShowMoreTiles">Show {0} more</s:String>
+    <s:String x:Key="S.Folder.DateRange">{0} · {1} – {2}</s:String>
+    <s:String x:Key="S.Folder.Conflicts"> · {0} name collision(s)</s:String>
+    <s:String x:Key="S.Folder.Duplicates"> · {0} duplicate(s)</s:String>
+    <s:String x:Key="S.Folder.SkippedDuplicates"> · {0} duplicate(s) skipped</s:String>
+    <s:String x:Key="S.Folder.Errors"> · {0} error(s)</s:String>
+
+    <!-- Card: grouping -->
+    <s:String x:Key="S.Card.Grouping">Grouping</s:String>
+    <s:String x:Key="S.Opt.Grouping.ExifOnly">EXIF only (no LLM)</s:String>
+    <s:String x:Key="S.Opt.Grouping.Combined">Combined (EXIF base + LLM)</s:String>
+    <s:String x:Key="S.Grouping.Intro">Shots that belong together are recognised by time and content and sorted into folders such as "20260701_Holiday Sylt".</s:String>
+    <s:String x:Key="S.Duplicates.Toggle">Skip duplicates</s:String>
+    <s:String x:Key="S.Duplicates.Hint">Where the same picture is present more than once — the WhatsApp copy beside the original, for instance — only the best copy is sorted. The others are left untouched; nothing is deleted.</s:String>
+    <s:String x:Key="S.Unmatched.Toggle">Collecting folder for unmatched shots</s:String>
+    <s:String x:Key="S.Unmatched.Hint">Shots with no relation to an event (in-between project photos, for instance) and single images go into ONE collecting folder directly in the base folder rather than into event folders.</s:String>
+    <s:String x:Key="S.Field.UnmatchedName">Name of the collecting folder</s:String>
+    <s:String x:Key="S.Field.MinItems">Minimum size for a folder of its own</s:String>
+    <s:String x:Key="S.Field.MaxEventGap">Longest pause within one event</s:String>
+    <s:String x:Key="S.Unit.Days">days</s:String>
+    <s:String x:Key="S.Hint.MaxEventGap.One">A pause over one day separates two visits to the same place.</s:String>
+    <s:String x:Key="S.Hint.MaxEventGap.Many">A pause over {0:0.#} days separates two visits to the same place.</s:String>
+    <s:String x:Key="S.Field.Spatial">Spatial grouping (km)</s:String>
+    <s:String x:Key="S.Field.SpatialHint">How close things have to be to count as the same place.</s:String>
+    <s:String x:Key="S.Field.SamePlace">Same place up to</s:String>
+    <s:String x:Key="S.Field.WholeGroups">Whole groups</s:String>
+    <s:String x:Key="S.Exif.Toggle">Write the description into the image file</s:String>
+    <s:String x:Key="S.Exif.Hint">Writes the generated description losslessly into the XMP data of JPEG files — shown as "Title" in Explorer and readable by other photo apps. Modifies your original files.</s:String>
+
+    <!-- Card: local model -->
+    <s:String x:Key="S.Card.Llm">Local model (Ollama)</s:String>
+    <s:String x:Key="S.Tip.RecheckConnection">Check the connection again</s:String>
+    <s:String x:Key="S.Field.Endpoint">Endpoint</s:String>
+    <s:String x:Key="S.Field.Model">Model (analysis, grouping &amp; naming)</s:String>
+    <s:String x:Key="S.Tip.PullModel">Download this model</s:String>
+    <s:String x:Key="S.Model.Installed">✓ installed</s:String>
+    <s:String x:Key="S.Cancel">Cancel</s:String>
+    <s:String x:Key="S.Model.Hint">Only models that can take image input are offered. Very small variants are deliberately missing: they describe real photos wrongly and are not even faster at it.</s:String>
+    <s:String x:Key="S.Cache.Toggle">Analysis cache</s:String>
+    <s:String x:Key="S.Cache.Hint">Image descriptions are stored — repeat runs skip files already analysed.</s:String>
+    <s:String x:Key="S.Cache.Clear">Clear cache</s:String>
+    <s:String x:Key="S.Cache.ClearTip">Discards every stored description. Worth doing after new reference faces, changed facts or corrected notes — the next run then analyses everything again.</s:String>
+    <s:String x:Key="S.Speed.Title">Speed</s:String>
+    <s:String x:Key="S.Field.Parallel">Concurrent analyses</s:String>
+    <s:String x:Key="S.Burst.Toggle">Analyse a burst only once</s:String>
+    <s:String x:Key="S.Burst.Hint">Shots from the same camera taken within seconds at the same place take the description of the first one. Saves a lot of time on bursts — but relies on them showing the same thing.</s:String>
+
+    <!-- Card: video -->
+    <s:String x:Key="S.Card.Video">Video analysis (ffmpeg)</s:String>
+    <s:String x:Key="S.Card.Update">Update</s:String>
+    <s:String x:Key="S.Card.Interface">Interface</s:String>
+    <s:String x:Key="S.Tip.Recheck">Check again</s:String>
+    <s:String x:Key="S.Ffmpeg.Install">Install ffmpeg (winget)</s:String>
+
+    <!-- Card: knowledge and people -->
+    <s:String x:Key="S.Card.Knowledge">Knowledge &amp; people</s:String>
+    <s:String x:Key="S.Faces.Toggle">Recognise people automatically</s:String>
+    <s:String x:Key="S.Faces.Hint">Recognised people are given to the model as fact instead of leaving it to guess. Runs locally, costs about 50 ms per image.</s:String>
+    <s:String x:Key="S.Faces.Download">Download recognition models</s:String>
+
+    <!-- Card: about and updates -->
+    <s:String x:Key="S.Update.Toggle">Check for updates at start</s:String>
+    <s:String x:Key="S.Update.Hint">Asks once a day whether a newer version exists. Never downloads or installs anything on its own.</s:String>
+    <s:String x:Key="S.Update.CheckNow">Check now</s:String>
+    <s:String x:Key="S.Update.Install">Download and install</s:String>
+    <s:String x:Key="S.Update.NoCheckYet">No update check has run yet.</s:String>
+    <s:String x:Key="S.Update.LastChecked">Last checked {0:g}.</s:String>
+    <s:String x:Key="S.Update.Checking">Checking for updates …</s:String>
+    <s:String x:Key="S.Update.Available">Version {0} is available.</s:String>
+    <s:String x:Key="S.Update.AvailableReleased">Version {0} is available (released {1}).</s:String>
+    <s:String x:Key="S.Update.UpToDate">This is the newest version.</s:String>
+    <s:String x:Key="S.Update.CheckFailed">Update check failed: {0}</s:String>
+    <s:String x:Key="S.Update.InstallTitle">Install update</s:String>
+    <s:String x:Key="S.Update.InstallConfirm">Version {0} has been downloaded and verified.&#x0a;&#x0a;Media Organizer will close now, replace itself and start again. Any run in progress will be lost.</s:String>
+    <s:String x:Key="S.Update.ReadyToInstall">Version {0} is downloaded and ready to install.</s:String>
+    <s:String x:Key="S.Update.StartFailed">The update could not be started. The unpacked version is in your temp folder under MediaOrganizer\updates.</s:String>
+
+    <!-- Main area -->
+    <s:String x:Key="S.Current">Current state</s:String>
+    <s:String x:Key="S.Undo">Undo last run</s:String>
+    <s:String x:Key="S.UndoTipIdle">Takes back the plan applied last — files return to where they came from.</s:String>
+    <s:String x:Key="S.UndoTipResult">Takes back the applied plan — files return to where they came from.</s:String>
+    <s:String x:Key="S.Tip.RescanSource">Read the current state again</s:String>
+    <s:String x:Key="S.Start">Start sorting</s:String>
+    <s:String x:Key="S.StartTip">Start sorting — this only builds a preview, nothing is written yet.</s:String>
+    <s:String x:Key="S.Ready.Title">Ready to organize</s:String>
+    <s:String x:Key="S.Ready.Body">Choose a source and target folder on the left, along with the grouping mode. Once a source folder is chosen, its existing structure appears here. A run produces only a preview at first — nothing is written until you press the button.</s:String>
+    <s:String x:Key="S.Apply">Apply</s:String>
+    <s:String x:Key="S.ApplyTip">Carries out the plan — only now are files moved.</s:String>
+    <s:String x:Key="S.ApplySelected">Apply selection ({0})</s:String>
+    <s:String x:Key="S.ApplySelectedTip">Carries out the ticked folders only. The rest stays as a plan and can be applied later.</s:String>
+    <s:String x:Key="S.DiscardTip">Discard the plan; nothing has been written.</s:String>
+    <s:String x:Key="S.CheckDuplicatesTip">Compares the contents (SHA-256) at every name collision. Without this check the preview shows only that the names match.</s:String>
+    <s:String x:Key="S.RecognizeRename">Recognise people &amp; rename</s:String>
+    <s:String x:Key="S.RecognizeRenameTipPlan">Recognises people on the source files and recomputes the folder names in the plan — nothing is moved.</s:String>
+    <s:String x:Key="S.RecognizeRenameTipResult">Recognises people on the files already sorted and updates the folder names — without moving any files.</s:String>
+    <s:String x:Key="S.CreateFolder">Create folder …</s:String>
+    <s:String x:Key="S.RemoveEmpty">Remove empty folders</s:String>
+    <s:String x:Key="S.Result">Result</s:String>
+    <s:String x:Key="S.NewRun">New run</s:String>
+    <s:String x:Key="S.Result.Hint">Double-click opens the preview · click/Ctrl/Shift or a rubber band to select · drag and drop onto another folder moves.</s:String>
+    <s:String x:Key="S.ShowCurrentTip">Show the existing structure of the source folder for comparison</s:String>
+    <s:String x:Key="S.BackToPreviewTip">Show the planned state again</s:String>
+    <s:String x:Key="S.SaveHomeZone">Save as a home zone …</s:String>
+    <s:String x:Key="S.Tip.DismissSuggestion">Hide this suggestion</s:String>
+    <s:String x:Key="S.Warnings.Header">Notes ({0})</s:String>
+
+    <!-- Notes from a run. The keys live in Core/Services/RunWarnings.cs; a test
+         holds both dictionaries against them. -->
+    <s:String x:Key="S.Warn.NoFfmpeg">ffmpeg was not found — videos are placed by their metadata alone, without image analysis.</s:String>
+    <s:String x:Key="S.Warn.SkippedFormats">{0} file(s) skipped, format not supported: {1}.</s:String>
+    <s:String x:Key="S.Warn.NoCaptureMetadata">{0} file(s) without capture metadata — the file system timestamp was used, and that says when the file was copied, not when the photo was taken.</s:String>
+    <s:String x:Key="S.Warn.DateFromFileName">{0} file(s) carry no capture metadata, but their name does — the date was read from the file name (messenger images, screenshots).</s:String>
+    <s:String x:Key="S.Warn.LittleGps">{0} of {1} shots without GPS data — telling home from away is only partly possible for them.</s:String>
+    <s:String x:Key="S.Warn.FaceModelsMissing">Face recognition is switched on, but the models are missing — please download them in the settings.</s:String>
+    <s:String x:Key="S.Warn.NoPersonsKnown">Face recognition is switched on, but no people are known — assign faces through the knowledge view.</s:String>
+    <s:String x:Key="S.Warn.FaceRecognitionUnavailable">Face recognition unavailable: {0}</s:String>
+    <s:String x:Key="S.Warn.HomeZoneGuessed">Home zone guessed at {0} — please confirm it through the house icon on a result group, or through the suggestion.</s:String>
+    <s:String x:Key="S.Warn.WideHomeZone">Zone "{0}" is marked as home and reaches {1:0.#} km — everything inside it counts as everyday life, never as a trip. Change its kind or its radius if that is not what you meant.</s:String>
+    <s:String x:Key="S.Warn.EverydayFolders">{0} group(s) inside a home zone went into these dateless folders: {1}. Without the model there is nothing to tell one day at home from another. A zone of kind "home" is everyday life — check its kind if a folder here should not be.</s:String>
+    <s:String x:Key="S.Warn.UnnamedToCollection">{0} group(s) could not be named — no GPS, and no model to ask. Their {1} shot(s) are in "{2}".</s:String>
+    <s:String x:Key="S.Warn.SplitWithoutHierarchy">Dateless folders are set to split per period, but the target hierarchy is flat — there is no level for the parts to sit in, so each stayed one folder.</s:String>
+    <s:String x:Key="S.Warn.NoMediaFound">No photos or videos found in the source folder.</s:String>
+    <s:String x:Key="S.Warn.AnalysisFailures">{0} image analysis call(s) failed — those files were placed by time alone.</s:String>
+    <s:String x:Key="S.Warn.GroupingFailed">Grouping {0} shots by topic failed — they were grouped by time alone.</s:String>
+    <s:String x:Key="S.Warn.TargetFolderFailed">Target folder "{0}" could not be created: {1}</s:String>
+    <s:String x:Key="S.Warn.TransferCancelled">Applying cancelled — the files already transferred are in the target folder. "Undo last run" takes that part back.</s:String>
+    <s:String x:Key="S.Warn.TransferFailed">{0} file(s) could not be transferred (details in the result view).</s:String>
+    <s:String x:Key="S.Warn.DuplicatesSkipped">{0} file(s) skipped — an identical version was already in the target. The source files were left untouched.</s:String>
+    <s:String x:Key="S.Warn.DescriptionsWritten">Description saved into {0} image file(s) (EXIF/XMP).</s:String>
+    <s:String x:Key="S.Warn.DescriptionsPartlyWritten">Description saved into {0} image file(s) (EXIF/XMP). {1} file(s) do not support it.</s:String>
+    <s:String x:Key="S.Warn.DescriptionsNotWritten">The description could not be written into any of the {0} image file(s) — only JPEG is supported.</s:String>
+    <s:String x:Key="S.Warn.UndoCopyNotRemoved">"{0}" kept — the original is missing or differs.</s:String>
+    <s:String x:Key="S.Warn.UndoSourceOccupied">"{0}" not moved back — a file is already in its original place.</s:String>
+    <s:String x:Key="S.Warn.UndoFileFailed">"{0}": {1}</s:String>
+    <s:String x:Key="S.Tip.ToggleWarnings">Show or hide the notes</s:String>
+    <s:String x:Key="S.Tip.DismissWarning">Hide this note</s:String>
+    <s:String x:Key="S.Tip.DismissAllWarnings">Hide all notes</s:String>
+
+</ResourceDictionary>

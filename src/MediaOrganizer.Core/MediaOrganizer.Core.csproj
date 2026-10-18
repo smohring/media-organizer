@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyTitle>Media Organizer Core</AssemblyTitle>
+    <Description>UI-free processing logic: scan, metadata, grouping, naming, planning.</Description>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Die Gruppierungs-Regeln sind interne Methoden der Pipeline. Die Tests
+         rufen sie direkt auf statt über Reflexion: So bricht eine Umbenennung
+         beim Kompilieren und nicht erst zur Laufzeit. -->
+    <InternalsVisibleTo Include="MediaOrganizer.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MetadataExtractor" Version="2.8.1" />
+    <PackageReference Include="OpenCvSharp4" Version="4.11.0.20250507" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.11.0.20250507" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- GeoNames cities1000 (CC-BY 4.0), getrimmt auf Name/Lat/Lon/Land/Einwohner -->
+    <EmbeddedResource Include="Resources\cities.tsv.gz" LogicalName="MediaOrganizer.Core.cities.tsv.gz" />
+  </ItemGroup>
+
+</Project>

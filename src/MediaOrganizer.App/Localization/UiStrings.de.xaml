@@ -1,0 +1,610 @@
+<!--
+  German interface strings.
+
+  Keys are grouped by where they appear. Every key must also exist in
+  UiStrings.en.xaml — a missing one shows up as the bare key in the window
+  rather than as a crash, which is deliberate but still a defect.
+
+  Not in here: the strings the model produces (folder names, descriptions).
+  Those follow AppSettings.OutputLanguage, not the interface language, and live
+  in Core/Llm/GermanPrompts.cs.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Application-wide -->
+    <s:String x:Key="S.Crash.Body">Unerwarteter Fehler:&#x0a;&#x0a;{0}</s:String>
+    <s:String x:Key="S.Language.System">Wie Windows</s:String>
+    <s:String x:Key="S.Language.German">Deutsch</s:String>
+    <s:String x:Key="S.Language.English">English</s:String>
+
+    <!-- Header and navigation -->
+    <s:String x:Key="S.App.Tagline">Fotos &amp; Videos thematisch sortieren</s:String>
+    <s:String x:Key="S.Nav.Organize">Sortieren</s:String>
+    <s:String x:Key="S.Nav.Settings">Einstellungen</s:String>
+    <s:String x:Key="S.Settings.Intro">Einmal einstellen und liegen lassen — Modell, Videoanalyse und Aktualisierung. Was zu einem Lauf gehört, steht links.</s:String>
+    <s:String x:Key="S.Nav.Knowledge">Wissen</s:String>
+
+    <!-- Thumbnails and folder cards -->
+    <s:String x:Key="S.Thumb.ZoomTip">Bilder je Reihe — auch mit Strg + Mausrad über den Bildern</s:String>
+    <s:String x:Key="S.Thumb.PerRow">{0} pro Reihe</s:String>
+    <s:String x:Key="S.Folder.RenameTip">Zum Umbenennen klicken</s:String>
+    <s:String x:Key="S.Folder.EmptyPlanned">Leer — wird beim Übernehmen nicht angelegt.</s:String>
+    <s:String x:Key="S.Folder.DeleteEmptyTip">Leeren Ordner löschen</s:String>
+    <s:String x:Key="S.Folder.OpenTip">Ordner im Explorer öffnen</s:String>
+    <s:String x:Key="S.Folder.SelectTip">Diesen Ordner für das Übernehmen auswählen</s:String>
+    <s:String x:Key="S.Folder.CollapseTip">Inhalt ausblenden</s:String>
+    <s:String x:Key="S.Folder.ExpandTip">Inhalt einblenden</s:String>
+
+    <!-- Hint above the settings while a plan is open -->
+    <s:String x:Key="S.Settings.PlanOpen">Ein Plan ist offen. Zielordner, Ablage und Ordnernamen wirken sofort darauf; alles, was einen neuen Lauf braucht — Gruppierung, Modell, Schwellen, Quellordner — ist so lange gesperrt. Plan übernehmen oder verwerfen, um es zu ändern.</s:String>
+
+    <!-- Card: folders -->
+    <s:String x:Key="S.Card.Folders">Ordner</s:String>
+    <s:String x:Key="S.Field.SourceFolder">Quellordner</s:String>
+    <s:String x:Key="S.Field.TargetFolder">Zielordner (Basisordner)</s:String>
+    <s:String x:Key="S.Tip.ChooseSource">Quellordner wählen</s:String>
+    <s:String x:Key="S.Tip.ChooseTarget">Zielordner wählen</s:String>
+
+    <!-- Card: storage -->
+    <s:String x:Key="S.Card.Storage">Ablage</s:String>
+    <s:String x:Key="S.Transfer.Move">Verschieben</s:String>
+    <s:String x:Key="S.Transfer.Copy">Kopieren</s:String>
+    <s:String x:Key="S.Transfer.MoveHint">Dateien werden aus dem Quellordner in das Ziel verschoben.</s:String>
+    <s:String x:Key="S.Transfer.CopyHint">Originale bleiben im Quellordner erhalten.</s:String>
+    <s:String x:Key="S.Field.Hierarchy">Zielordner-Hierarchie</s:String>
+    <s:String x:Key="S.Opt.Hierarchy.Flat">Keine zusätzliche Ebene</s:String>
+    <s:String x:Key="S.Opt.Hierarchy.Year">Jahres-Ebene  (2026\…)</s:String>
+    <s:String x:Key="S.Opt.Hierarchy.YearMonth">Jahr + Monat  (2026\07\…)</s:String>
+    <s:String x:Key="S.Split.Toggle">Ein Sammelordner je Jahr oder Monat</s:String>
+    <s:String x:Key="S.Split.Hint">Gilt ebenso für den Alltagsordner des EXIF-Modus.</s:String>
+    <s:String x:Key="S.Field.UiLanguage">Sprache der Oberfläche</s:String>
+    <s:String x:Key="S.Field.OutputLanguage">Sprache der Ordnernamen</s:String>
+    <s:String x:Key="S.Opt.Output.German">Deutsch  (20260701_Urlaub Sylt)</s:String>
+    <s:String x:Key="S.Opt.Output.English">English  (20260701_Holiday Sylt)</s:String>
+    <s:String x:Key="S.Dlg.BrowseSource">Quellordner wählen</s:String>
+    <s:String x:Key="S.Dlg.BrowseTarget">Zielordner (Basisordner) wählen</s:String>
+
+    <!-- Hints built in code (MainViewModel) -->
+    <s:String x:Key="S.Hint.OutputLanguage.En">Ordnernamen und Beschreibungen entstehen auf Englisch. Bereits deutsch analysierte Aufnahmen bleiben im Cache — ein Wechsel zurück findet sie wieder.</s:String>
+    <s:String x:Key="S.Hint.OutputLanguage.De">Ordnernamen und Beschreibungen entstehen auf Deutsch. Die Sprache der Oberfläche bleibt davon unberührt.</s:String>
+    <s:String x:Key="S.Hint.Mode.ExifOnly">Nur Ort und Zeit: Ordner „Datum_Ort", Heimatzone in den Alltagsordner, ohne GPS in den Sammelordner. Minuten statt Stunden.</s:String>
+    <s:String x:Key="S.Hint.Mode.Combined">Empfohlen: Ort und Zeit bilden Gruppen, das Modell trennt nach Inhalt und prüft jede Grenze gegen.</s:String>
+    <s:String x:Key="S.Hint.MinItems.Off">Jede Gruppe bekommt einen Ordner — auch eine mit einer Aufnahme.</s:String>
+    <s:String x:Key="S.Hint.MinItems.On">Kleinere Gruppen wandern in den Sammelordner.</s:String>
+    <s:String x:Key="S.Hint.GpsRadius.Off">Aus — kein Schnitt nach Orten.</s:String>
+    <s:String x:Key="S.Hint.GpsRadius.On">Näher zusammen gilt als derselbe Ort. Die Heimfahrt landet damit nicht im Ausflugsordner.</s:String>
+    <s:String x:Key="S.Hint.RegionMerge.Off">Aus — jede Untergruppe wird ein eigener Ordner.</s:String>
+    <s:String x:Key="S.Hint.RegionMerge.On">Etappen eines Ausflugs wachsen wieder zusammen — nur auswärts, nie an Alltagsorten.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.Flat">Ohne Hierarchie wirkungslos: Ohne zusätzliche Ebene gibt es nichts, worin ein Ordner je Jahr liegen könnte.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.Off">Ein „{0}“ für die ganze Sammlung, neben den Jahres-Ebenen.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.Year">2026\{0} — einer je Jahr, innerhalb der Jahres-Ebene.</s:String>
+    <s:String x:Key="S.Hint.SplitDateless.YearMonth">2026\07\{0} — einer je Monat, innerhalb der Monats-Ebene.</s:String>
+    <s:String x:Key="S.Hint.Parallel.Serial">Eine Anfrage nach der anderen — am langsamsten, aber am schonendsten.</s:String>
+    <s:String x:Key="S.Hint.Parallel.Concurrent">{0} Bilder gleichzeitig — gleiche Ergebnisse, nur schneller. Sehr hohe Werte kosten Grafikspeicher.</s:String>
+
+    <!-- Validation before a run can start -->
+    <s:String x:Key="S.Block.NoSource">Bitte einen vorhandenen Quellordner wählen.</s:String>
+    <s:String x:Key="S.Block.NoTarget">Bitte einen Zielordner (Basisordner) wählen.</s:String>
+    <s:String x:Key="S.Block.SameFolder">Quell- und Zielordner dürfen nicht identisch sein.</s:String>
+    <s:String x:Key="S.Block.OllamaOffline">Ollama ist nicht erreichbar — bitte starten oder Modus "Rein EXIF" wählen.</s:String>
+    <s:String x:Key="S.Block.ModelMissing">Das gewählte Modell ist noch nicht installiert — bitte herunterladen.</s:String>
+
+    <!-- Phase titles during a run -->
+    <s:String x:Key="S.Phase.Prepare">Vorbereitung</s:String>
+    <s:String x:Key="S.Phase.Scan">Quellordner durchsuchen</s:String>
+    <s:String x:Key="S.Phase.Metadata">Metadaten lesen</s:String>
+    <s:String x:Key="S.Phase.Analyze">Bilder analysieren</s:String>
+    <s:String x:Key="S.Phase.Group">Aufnahmen gruppieren</s:String>
+    <s:String x:Key="S.Phase.Name">Ordnernamen finden</s:String>
+    <s:String x:Key="S.Phase.Plan">Vorschau zusammenstellen</s:String>
+    <s:String x:Key="S.Phase.Verify">Duplikate prüfen</s:String>
+    <s:String x:Key="S.Phase.Copy">Dateien kopieren</s:String>
+    <s:String x:Key="S.Phase.Move">Dateien verschieben</s:String>
+    <s:String x:Key="S.Phase.Undo">Lauf zurücknehmen</s:String>
+    <s:String x:Key="S.Phase.Done">Fertig</s:String>
+
+    <!-- Progress line during a run. Reported by the core as a key plus its
+         arguments (Models/ProgressKeys.cs), because a run started in one
+         language may be read in another. -->
+    <s:String x:Key="S.Progress.Scanning">Durchsuche Quellordner …</s:String>
+    <s:String x:Key="S.Progress.ReadingMetadata">Lese Metadaten ({0}/{1}) …</s:String>
+    <s:String x:Key="S.Progress.RecognizingFaces">Gesichtserkennung {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.DistillingKnowledge">Aktualisiere Wissensbasis …</s:String>
+    <s:String x:Key="S.Progress.LoadingModel">Lade Analyse-Modell …</s:String>
+    <s:String x:Key="S.Progress.Analyzing">Analysiere {0} ({1}/{2}) …</s:String>
+    <s:String x:Key="S.Progress.AnalysisDone">Analyse abgeschlossen</s:String>
+    <s:String x:Key="S.Progress.GroupingByTimeAndGps">Gruppiere nach Zeit &amp; GPS …</s:String>
+    <s:String x:Key="S.Progress.GroupingByTopic">Thematische Gruppierung {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.SceneVectors">Bildvergleich vorbereiten {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.ReadingNotes">Notizen lesen {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.FindingDuplicates">Dubletten suchen {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.Rescuing">Aufnahmen aus dem Sammelordner zuordnen {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.CheckingBoundaries">Prüfe Gruppengrenzen {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.GroupsFormed">{0} Gruppen gebildet</s:String>
+    <s:String x:Key="S.Progress.NamingGroup">Benenne Gruppe {0}/{1} …</s:String>
+    <s:String x:Key="S.Progress.NamingDone">Benennung abgeschlossen</s:String>
+    <s:String x:Key="S.Progress.BuildingPlan">Stelle Vorschau zusammen …</s:String>
+    <s:String x:Key="S.Progress.PlanReady">Vorschau bereit</s:String>
+    <s:String x:Key="S.Progress.CheckingDuplicate">Prüfe {0} ({1}/{2}) …</s:String>
+    <s:String x:Key="S.Progress.DuplicateCheckDone">Prüfung abgeschlossen</s:String>
+    <s:String x:Key="S.Progress.Moving">Verschiebe {0} …</s:String>
+    <s:String x:Key="S.Progress.Copying">Kopiere {0} …</s:String>
+    <s:String x:Key="S.Progress.Restoring">Stelle wieder her ({0}/{1}) …</s:String>
+    <s:String x:Key="S.Progress.ReadingSourceStructure">Lese vorhandene Struktur ({0}/{1}) …</s:String>
+    <s:String x:Key="S.Progress.SourceStructureRead">Ist-Zustand gelesen</s:String>
+    <s:String x:Key="S.Progress.Done">Fertig</s:String>
+
+    <!-- Setup and maintenance, likewise reported by the core as a key
+         (Models/StatusReport.cs) -->
+    <s:String x:Key="S.Setup.DownloadingFile">Lade {0} …</s:String>
+    <s:String x:Key="S.Setup.DownloadingUpdate">Lade Aktualisierung … {0} von {1} MB</s:String>
+    <s:String x:Key="S.Setup.VerifyingDownload">Prüfe den Download …</s:String>
+    <s:String x:Key="S.Setup.ArchiveAlreadyThere">Archiv liegt bereits vor</s:String>
+    <s:String x:Key="S.Setup.Unpacking">Entpacke …</s:String>
+    <s:String x:Key="S.Setup.UpdateReady">Aktualisierung bereit zur Installation</s:String>
+    <s:String x:Key="S.Setup.RunsFromDriveRoot">Media Organizer läuft aus einem Laufwerks-Stammverzeichnis. Verschiebe das Programm in einen eigenen Ordner, damit es sich selbst aktualisieren kann.</s:String>
+    <s:String x:Key="S.Setup.NotAnApplicationFolder">Der Programmordner sieht nicht wie ein Media-Organizer-Ordner aus.</s:String>
+    <s:String x:Key="S.Setup.FolderNotWritable">Media Organizer kann nicht in seinen eigenen Ordner schreiben ({0}). Verschiebe ihn an einen beschreibbaren Ort, oder lade die neue Fassung von Hand.</s:String>
+
+    <!-- Cache -->
+    <s:String x:Key="S.Cache.ClearFailed">Analyse-Cache konnte nicht geleert werden (Datei in Benutzung?).</s:String>
+    <s:String x:Key="S.Cache.AlreadyEmpty">Der Analyse-Cache war bereits leer.</s:String>
+    <s:String x:Key="S.Cache.Cleared">{0} gespeicherte Beschreibung(en) verworfen{1}. Der nächste Lauf analysiert alle Aufnahmen neu — das dauert entsprechend.</s:String>
+    <s:String x:Key="S.Cache.ClearedFaces">, dazu die Gesichter von {0} Aufnahme(n)</s:String>
+
+    <!-- Status messages -->
+    <s:String x:Key="S.Msg.OllamaChecking">Prüfe Verbindung …</s:String>
+    <s:String x:Key="S.Msg.OllamaOnline">Ollama erreichbar</s:String>
+    <s:String x:Key="S.Msg.OllamaOffline">Ollama nicht erreichbar</s:String>
+    <s:String x:Key="S.Msg.FaceModelsInstalled">Erkennungsmodelle installiert</s:String>
+    <s:String x:Key="S.Msg.FfmpegInstalling">Installiere ffmpeg über winget …</s:String>
+    <s:String x:Key="S.Msg.FfmpegInstalled">Installiert: {0}</s:String>
+    <s:String x:Key="S.Msg.PullStarting">Starte Download von {0} …</s:String>
+    <s:String x:Key="S.Msg.FaceModelsMissing">Modelle nicht installiert (~{0} MB)</s:String>
+    <s:String x:Key="S.Msg.FaceModelsNotInstalled">Die Erkennungsmodelle sind noch nicht installiert — siehe Einstellungen.</s:String>
+    <s:String x:Key="S.Msg.FaceUnavailable">Gesichtserkennung nicht verfügbar: {0}</s:String>
+    <s:String x:Key="S.Msg.FfmpegFound">ffmpeg verfügbar — Videos werden inhaltlich analysiert</s:String>
+    <s:String x:Key="S.Msg.FfmpegMissing">ffmpeg fehlt — Videos nur über Windows-Vorschaubild</s:String>
+    <s:String x:Key="S.Msg.WingetMissing">winget nicht gefunden — bitte ffmpeg manuell installieren.</s:String>
+    <s:String x:Key="S.Msg.FfmpegStillMissing">Installation abgeschlossen, ffmpeg aber nicht gefunden.</s:String>
+    <s:String x:Key="S.Msg.ZoneSaved">Heimatzone "{0}" gespeichert — wird ab dem nächsten Lauf berücksichtigt.</s:String>
+    <s:String x:Key="S.Msg.NoteUnreadable">Notiz konnte nicht gespeichert werden (Datei nicht lesbar).</s:String>
+    <s:String x:Key="S.Msg.NoteRemoved">Notiz von "{0}" entfernt.</s:String>
+    <s:String x:Key="S.Msg.NoteSaved">Notiz an "{0}" gespeichert — fließt ab dem nächsten Lauf in Analyse und Benennung ein.</s:String>
+    <s:String x:Key="S.Msg.DescriptionRemoved">Beschreibung von {0} entfernt.</s:String>
+    <s:String x:Key="S.Msg.DescriptionChanged">Beschreibung von {0} geändert.</s:String>
+    <s:String x:Key="S.Msg.CacheOffSuffix"> Der Analyse-Cache ist aus — ein neuer Lauf erzeugt die Beschreibung neu.</s:String>
+    <s:String x:Key="S.Msg.RunCancelled">Lauf abgebrochen. Es wurde nichts geschrieben.</s:String>
+    <s:String x:Key="S.Msg.SourceViewHint">So liegen die Dateien heute im Quellordner. Es wurde nichts verändert.</s:String>
+    <s:String x:Key="S.Msg.PlanViewHint">Noch ist nichts geschrieben. Doppelklick öffnet die Vorschau · Klick/Strg/Shift oder Rahmen zum Markieren · Drag &amp; Drop ordnet eine Datei einem anderen Ordner zu.</s:String>
+    <s:String x:Key="S.Msg.SourceUnreadable">Ist-Zustand nicht lesbar: {0}</s:String>
+    <s:String x:Key="S.Msg.SourceEmpty">Keine Fotos oder Videos im Quellordner gefunden.</s:String>
+    <s:String x:Key="S.Msg.SourceSummary">{0} Ordner, {1} Datei(en) — so liegt der Quellordner heute vor.</s:String>
+    <s:String x:Key="S.Msg.PlanSummary">{0} Ordner ({1} neu), {2} Datei(en): {3} {4}</s:String>
+    <s:String x:Key="S.Msg.PlanEmptyFolders"> · {0} leere(r) Ordner wird nicht angelegt</s:String>
+    <s:String x:Key="S.Msg.PlanNoFiles">Der Plan enthält keine Dateien — es gibt nichts zu übernehmen.</s:String>
+    <s:String x:Key="S.Msg.PlanApplied">{0} Datei(en) in {1} Ordner übernommen.</s:String>
+    <s:String x:Key="S.Msg.PlanDiscarded">Plan verworfen — es wurde nichts geschrieben.</s:String>
+    <s:String x:Key="S.Msg.NoCollisions">Keine Namenskollisionen im Plan — es gibt nichts zu prüfen.</s:String>
+    <s:String x:Key="S.Msg.NoDuplicates">Kein inhaltsgleiches Duplikat gefunden — alle Namenskollisionen werden umbenannt.</s:String>
+    <s:String x:Key="S.Msg.DuplicatesFound">{0} inhaltsgleiche(s) Duplikat(e) gefunden — diese werden übersprungen, die Quelldateien bleiben unangetastet.</s:String>
+    <s:String x:Key="S.Msg.UndoCopies">{0} im Ziel angelegte Kopie(n) werden gelöscht — aber nur dort, wo die Originaldatei nachweislich unverändert am Ursprungsort liegt.</s:String>
+    <s:String x:Key="S.Msg.UndoMoves">{0} Datei(en) werden aus dem Zielordner an ihren Ursprungsort zurückverschoben. Vorhandene Dateien werden dabei nie überschrieben.</s:String>
+    <s:String x:Key="S.Msg.UndoQuestion">Lauf vom {0} zurücknehmen?</s:String>
+    <s:String x:Key="S.Msg.UndoRemovesEmpty">Leere, beim Lauf angelegte Ordner werden entfernt.</s:String>
+    <s:String x:Key="S.Msg.UndoRemovedDirs">{0} leere(r) Ordner entfernt</s:String>
+    <s:String x:Key="S.Msg.UndoCancelled">Rückgängigmachen abgebrochen — der bereits zurückgenommene Teil bleibt zurückgenommen.</s:String>
+    <s:String x:Key="S.Msg.AlreadyThere">"{0}" ist in "{1}" bereits inhaltsgleich vorhanden — nicht verschoben.</s:String>
+    <s:String x:Key="S.Msg.FolderExists">Dieser Ordner existiert bereits.</s:String>
+    <s:String x:Key="S.Msg.FolderPlanned">Ordner "{0}" im Plan angelegt — ziehe Dateien hinein, sonst wird er beim Übernehmen übergangen.</s:String>
+    <s:String x:Key="S.Msg.FolderCreateFailed">Ordner konnte nicht angelegt werden: {0}</s:String>
+    <s:String x:Key="S.Msg.FolderCreated">Ordner "{0}" angelegt.</s:String>
+    <s:String x:Key="S.Msg.OnlyEmptyDeletable">Nur leere Ordner können gelöscht werden.</s:String>
+    <s:String x:Key="S.Msg.FolderRemovedFromPlan">Ordner "{0}" aus dem Plan entfernt.</s:String>
+    <s:String x:Key="S.Msg.FolderNotEmpty">"{0}" enthält noch Dateien — nicht gelöscht.</s:String>
+    <s:String x:Key="S.Msg.EmptyFolderDeleted">Leerer Ordner "{0}" gelöscht.</s:String>
+    <s:String x:Key="S.Msg.FolderNotYet">"{0}" entsteht erst beim Übernehmen — es gibt noch nichts zu öffnen.</s:String>
+    <s:String x:Key="S.Msg.NoEmptyInPlan">Keine leeren Ordner im Plan.</s:String>
+    <s:String x:Key="S.Msg.EmptyRemovedFromPlan">{0} leere(n) Ordner aus dem Plan entfernt.</s:String>
+    <s:String x:Key="S.Msg.NoEmptyFound">Keine leeren Ordner gefunden.</s:String>
+    <s:String x:Key="S.Msg.EmptyDeleted">{0} leere(n) Ordner gelöscht.</s:String>
+    <s:String x:Key="S.Msg.MovedOne">"{0}" wird nach "{1}" einsortiert.</s:String>
+    <s:String x:Key="S.Msg.MovedMany">{0} Dateien werden nach "{1}" einsortiert.</s:String>
+    <s:String x:Key="S.Msg.NoPeopleKnown">Es sind keine Personen hinterlegt — bitte zuerst Gesichter zuordnen.</s:String>
+    <s:String x:Key="S.Phase.RecognizePeople">Personen erkennen</s:String>
+    <s:String x:Key="S.Msg.NoPeopleRecognized">Keine der hinterlegten Personen wurde erkannt — Ordnernamen unverändert.</s:String>
+    <s:String x:Key="S.Msg.RecognizedAndRenamed">{0} Datei(en) mit erkannten Personen, {1} Ordner umbenannt.</s:String>
+    <s:String x:Key="S.Msg.RenameTakenInPlan">Umbenennen nicht möglich: "{0}" ist im Plan bereits vergeben.</s:String>
+    <s:String x:Key="S.Msg.RenamedInPlan">Ordner heißt im Plan jetzt "{0}".</s:String>
+    <s:String x:Key="S.Msg.RenameTaken">Umbenennen nicht möglich: "{0}" existiert bereits.</s:String>
+    <s:String x:Key="S.Msg.Renamed">Ordner umbenannt in "{0}".</s:String>
+    <s:String x:Key="S.Msg.HomeSuggestion">{0} Aufnahmen entstanden bei {1}. Ist das ein Heimatort (z.B. "Zuhause")? Dann werden Fotos dort künftig nach Inhalt statt nach Ort benannt.</s:String>
+    <s:String x:Key="S.Msg.SubjectFiles">{0} Aufnahmen</s:String>
+    <s:String x:Key="S.Verb.Copy">kopieren</s:String>
+    <s:String x:Key="S.Verb.Move">verschieben</s:String>
+    <s:String x:Key="S.View.Current">Ist-Zustand</s:String>
+    <s:String x:Key="S.View.Plan">Vorschau</s:String>
+    <s:String x:Key="S.CreateFolderTip">Leeren Zielordner anlegen und Aufnahmen hineinziehen</s:String>
+    <s:String x:Key="S.Msg.PlanDuplicates">, {0} Duplikat(e) überspringen</s:String>
+    <s:String x:Key="S.Msg.PlanConflicts">, {0} umbenennen</s:String>
+    <s:String x:Key="S.Msg.UndoRestored">{0} zurückverschoben</s:String>
+    <s:String x:Key="S.Msg.UndoDeleted">{0} Kopie(n) entfernt</s:String>
+    <s:String x:Key="S.Msg.UndoSkipped">{0} übersprungen</s:String>
+    <s:String x:Key="S.Msg.UndoFailed">{0} fehlgeschlagen</s:String>
+    <s:String x:Key="S.Msg.UndoNothing">Es gab nichts zurückzunehmen.</s:String>
+    <s:String x:Key="S.Msg.UndoDone">Rückgängig gemacht: {0}.</s:String>
+    <s:String x:Key="S.Msg.UndoError">Rückgängigmachen fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.DupCheckCancelled">Duplikatprüfung abgebrochen.</s:String>
+    <s:String x:Key="S.Msg.DupCheckFailed">Duplikatprüfung fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.PullDone">{0} heruntergeladen.</s:String>
+    <s:String x:Key="S.Msg.PullCancelled">Download abgebrochen.</s:String>
+    <s:String x:Key="S.Msg.DownloadStarting">Starte Download …</s:String>
+    <s:String x:Key="S.Msg.DownloadDetail">{0} ({1:P0})</s:String>
+    <s:String x:Key="S.Msg.DownloadFailed">Download fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.FaceModelsReady">Modelle bereit.</s:String>
+    <s:String x:Key="S.Msg.InstallFailed">Installation fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.ReadingSource">Lese vorhandene Struktur …</s:String>
+    <s:String x:Key="S.Msg.FileMoved">"{0}" nach "{1}" verschoben.</s:String>
+    <s:String x:Key="S.Msg.FilesMoved">{0} Dateien nach "{1}" verschoben.</s:String>
+    <s:String x:Key="S.Msg.MoveFailed">Verschieben fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.DeleteFailed">Löschen fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.RenameFailed">Umbenennen fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.FaceProgress">Gesichtserkennung {0}/{1} …</s:String>
+    <s:String x:Key="S.Msg.NamingFolder">Benenne {0} …</s:String>
+    <s:String x:Key="S.Msg.OperationCancelled">Vorgang abgebrochen.</s:String>
+    <s:String x:Key="S.Msg.OperationFailed">Fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Msg.PersonRemoved">Person "{0}" entfernt.</s:String>
+    <s:String x:Key="S.Phase.UpdateFolderNames">Ordnernamen aktualisieren</s:String>
+
+    <!-- Context menus and dialogs -->
+    <s:String x:Key="S.Menu.OpenPreview">Vorschau öffnen</s:String>
+    <s:String x:Key="S.Menu.AssignPeople">Personen zuordnen …</s:String>
+    <s:String x:Key="S.Menu.EditNote">Notiz bearbeiten …</s:String>
+    <s:String x:Key="S.Menu.AddNote">Notiz hinzufügen …</s:String>
+    <s:String x:Key="S.Menu.EditDescription">Beschreibung bearbeiten …</s:String>
+    <s:String x:Key="S.Menu.AddDescription">Beschreibung hinzufügen …</s:String>
+    <s:String x:Key="S.Menu.DeleteDescriptions">Beschreibungen löschen ({0})</s:String>
+    <s:String x:Key="S.Menu.DeleteDescription">Beschreibung löschen</s:String>
+    <s:String x:Key="S.Menu.MoveSelection">Auswahl ({0}) verschieben nach</s:String>
+    <s:String x:Key="S.Menu.MoveTo">Verschieben nach</s:String>
+    <s:String x:Key="S.Menu.NewTargetFolder">Neuer Zielordner …</s:String>
+    <s:String x:Key="S.Menu.RemoveReferenceFace">Referenzgesicht entfernen</s:String>
+    <s:String x:Key="S.Menu.AssignTo">Zuordnen zu</s:String>
+    <s:String x:Key="S.Menu.RemoveOrphans">Verwaiste entfernen</s:String>
+
+    <s:String x:Key="S.Dlg.NoteTitle">Bild-Notiz</s:String>
+    <s:String x:Key="S.Dlg.NoteHeader">Notiz zu "{0}"</s:String>
+    <s:String x:Key="S.Dlg.NoteBody">Hinweise wie "meine Tochter Mia beim Spielen" fließen in Analyse und Benennung ein und werden in die Wissensbasis übernommen. Leer lassen zum Entfernen.</s:String>
+    <s:String x:Key="S.Dlg.DescriptionTitle">Bildbeschreibung</s:String>
+    <s:String x:Key="S.Dlg.DescriptionHeader">Beschreibung zu "{0}"</s:String>
+    <s:String x:Key="S.Dlg.DescriptionBody">Wird beim Übernehmen in die Bilddatei geschrieben, sofern die Option dafür an ist. Leer lassen zum Entfernen.</s:String>
+    <s:String x:Key="S.Dlg.NewFolderTitle">Neuer Zielordner</s:String>
+    <s:String x:Key="S.Dlg.NewFolderHeader">Thema für den neuen Ordner</s:String>
+    <s:String x:Key="S.Dlg.NewFolderBody">Das Datum der ersten Aufnahme wird automatisch vorangestellt (z.B. 20260701_Urlaub Sylt).</s:String>
+    <s:String x:Key="S.Dlg.CreateFolderTitle">Neuen Ordner anlegen</s:String>
+    <s:String x:Key="S.Dlg.CreateFolderHeader">Thema des neuen Ordners</s:String>
+    <s:String x:Key="S.Dlg.CreateFolderBody">Der Ordner wird leer angelegt; das heutige Datum wird vorangestellt. Danach kannst du Bilder per Drag &amp; Drop hineinziehen.</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneTitle">Heimatzone speichern</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneHeader">Name der Heimatzone</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneBody">Aufnahmen dort werden künftig nach Inhalt statt nach Ort benannt.</s:String>
+    <s:String x:Key="S.Dlg.HomeZoneDefault">Zuhause</s:String>
+    <s:String x:Key="S.Dlg.PersonTitle">Person anlegen</s:String>
+    <s:String x:Key="S.Dlg.PersonNameHeader">Name der Person</s:String>
+    <s:String x:Key="S.Dlg.PersonNameBody">z.B. "Mia". Gesichter ordnest du danach über die Ergebnisansicht zu.</s:String>
+    <s:String x:Key="S.Dlg.PersonRelationHeader">Beziehung zu {0} (optional)</s:String>
+    <s:String x:Key="S.Dlg.PersonRelationBody">z.B. "Tochter", "Ehefrau", "Opa" — fließt als Kontext in die Benennung ein.</s:String>
+    <s:String x:Key="S.Dlg.FactAddTitle">Fakt hinzufügen</s:String>
+    <s:String x:Key="S.Dlg.FactAddHeader">Neuer Wissensbasis-Fakt</s:String>
+    <s:String x:Key="S.Dlg.FactAddBody">Kurz und dauerhaft formulieren, z.B. "Mia ist unsere Tochter (Kleinkind, geb. 2024)".</s:String>
+    <s:String x:Key="S.Dlg.FactEditTitle">Fakt bearbeiten</s:String>
+    <s:String x:Key="S.Dlg.FactEditHeader">Fakt</s:String>
+    <s:String x:Key="S.Dlg.FactEditBody">Leer lassen entfernt den Fakt.</s:String>
+    <s:String x:Key="S.Dlg.NoteEditTitle">Notiz bearbeiten</s:String>
+    <s:String x:Key="S.Dlg.NoteEditBody">Leer lassen entfernt die Notiz.</s:String>
+    <s:String x:Key="S.Btn.Save">Speichern</s:String>
+    <s:String x:Key="S.Btn.Create">Erstellen</s:String>
+    <s:String x:Key="S.Btn.Add">Anlegen</s:String>
+    <s:String x:Key="S.Btn.AddFact">Hinzufügen</s:String>
+    <s:String x:Key="S.Btn.Next">Weiter</s:String>
+
+    <!-- Knowledge view -->
+    <s:String x:Key="S.Know.ModelsMissing">Die Erkennungsmodelle fehlen — bitte in den Einstellungen laden.</s:String>
+    <s:String x:Key="S.Know.PeopleSaved">Personen gespeichert.</s:String>
+    <s:String x:Key="S.Know.PersonUpdated">Person aktualisiert.</s:String>
+    <s:String x:Key="S.Know.ReferenceFaces">{0} Referenzgesicht(er)</s:String>
+    <s:String x:Key="S.Know.ReferenceFacesWithRelation">{0} · {1} Referenzgesicht(er)</s:String>
+    <s:String x:Key="S.Know.ZoneHome">Zuhause</s:String>
+    <s:String x:Key="S.Know.ZoneVacation">Urlaubsort</s:String>
+    <s:String x:Key="S.Know.ZoneSubtitle">{0} · {1} · Radius {2} km</s:String>
+    <s:String x:Key="S.Know.NearPlace">bei {0}</s:String>
+    <s:String x:Key="S.Know.Summary">{0} Person(en) · {1} Fakt(en) · {2} Heimatzone(n) · {3} Notiz(en)</s:String>
+    <s:String x:Key="S.Know.ZoneOther">Ort</s:String>
+    <s:String x:Key="S.Know.ZoneSaved">Zone "{0}" gespeichert.</s:String>
+    <s:String x:Key="S.Know.ZoneRemoved">Heimatzone "{0}" entfernt.</s:String>
+    <s:String x:Key="S.Know.PersonSaved">Person "{0}" gespeichert.</s:String>
+    <s:String x:Key="S.Know.FaceMoved">Gesicht zu "{0}" verschoben.</s:String>
+    <s:String x:Key="S.Know.FaceRemoved">Referenzgesicht entfernt.</s:String>
+    <s:String x:Key="S.Know.FactAdded">Fakt hinzugefügt.</s:String>
+    <s:String x:Key="S.Know.FactRemoved">Fakt entfernt.</s:String>
+    <s:String x:Key="S.Know.FactUpdated">Fakt aktualisiert.</s:String>
+    <s:String x:Key="S.Know.NoteRemoved">Notiz entfernt.</s:String>
+    <s:String x:Key="S.Know.NoteUpdated">Notiz aktualisiert.</s:String>
+    <s:String x:Key="S.Know.NoDistilled">Es gibt keine bereits ausgewerteten Notizen.</s:String>
+    <s:String x:Key="S.Know.Released">{0} Notiz(en) werden beim nächsten Lauf erneut ausgewertet. Vorhandene Fakten bleiben bestehen.</s:String>
+    <s:String x:Key="S.Know.NoNotes">Es sind keine Notizen vorhanden.</s:String>
+    <s:String x:Key="S.Know.NotesRemoved">{0} Notiz(en) entfernt. Die daraus gewonnenen Fakten bleiben erhalten.</s:String>
+
+    <!-- Knowledge view (XAML) -->
+    <s:String x:Key="S.KV.Title">Wissen</s:String>
+    <s:String x:Key="S.KV.Intro">Dauerhaftes Wissen, das in jeden Lauf einfließt: erkannte Personen, allgemeine Fakten, Heimatzonen und Notizen an einzelnen Bildern.</s:String>
+    <s:String x:Key="S.KV.PeopleTitle">Personen (Gesichtserkennung)</s:String>
+    <s:String x:Key="S.KV.PeopleIntro">Je mehr Referenzgesichter pro Person, desto zuverlässiger die Erkennung bei anderem Licht, Winkel oder Alter.</s:String>
+    <s:String x:Key="S.KV.LearnFromFolder">Aus Ordner anlernen …</s:String>
+    <s:String x:Key="S.KV.LearnFromFolderTip">Durchsucht einen Ordner, gruppiert alle Gesichter nach Person und lässt dich jede einmal benennen.</s:String>
+    <s:String x:Key="S.KV.AddPerson">Person anlegen …</s:String>
+    <s:String x:Key="S.KV.DoubleClickToEdit">Doppelklick zum Bearbeiten</s:String>
+    <s:String x:Key="S.KV.FaceTip">Rechtsklick: entfernen oder einer anderen Person zuordnen</s:String>
+    <s:String x:Key="S.KV.EditPersonTip">Name/Beziehung bearbeiten, zusammenführen</s:String>
+    <s:String x:Key="S.KV.DeletePersonTip">Person löschen</s:String>
+    <s:String x:Key="S.KV.NoPeople">Noch keine Personen. Lege eine an und ordne ihr Gesichter zu — am schnellsten über den Rechtsklick auf ein Foto in der Ergebnisansicht („Personen zuordnen …“).</s:String>
+    <s:String x:Key="S.KV.FactsTitle">Allgemeine Fakten</s:String>
+    <s:String x:Key="S.KV.FactsIntro">Gehen bei jedem Aufruf als Kontext mit — bitte kurz und dauerhaft gültig halten.</s:String>
+    <s:String x:Key="S.KV.AddFact">Fakt hinzufügen …</s:String>
+    <s:String x:Key="S.KV.EditFactTip">Fakt bearbeiten</s:String>
+    <s:String x:Key="S.KV.RemoveFactTip">Fakt entfernen</s:String>
+    <s:String x:Key="S.KV.NoFacts">Noch keine Fakten hinterlegt.</s:String>
+    <s:String x:Key="S.KV.ZonesTitle">Orte &amp; Zonen</s:String>
+    <s:String x:Key="S.KV.ZonesIntro">Zuhause bedeutet Alltag: Dort bleiben verschiedene Tätigkeiten getrennte Ereignisse, und der Ort taucht nicht im Ordnernamen auf. Urlaubsorte und sonstige Orte zählen als unterwegs. Zum Bearbeiten auf eine Zone klicken.</s:String>
+    <s:String x:Key="S.KV.AddZone">Zone anlegen …</s:String>
+    <s:String x:Key="S.KV.ClickToEdit">Zum Bearbeiten klicken</s:String>
+    <s:String x:Key="S.KV.EditZoneTip">Zone bearbeiten</s:String>
+    <s:String x:Key="S.KV.RemoveZoneTip">Zone entfernen</s:String>
+    <s:String x:Key="S.KV.NoZones">Noch keine Zonen hinterlegt. „Zone anlegen …“ schlägt deine häufigsten Aufnahmeorte vor.</s:String>
+    <s:String x:Key="S.KV.NotesTitle">Bild-Notizen</s:String>
+    <s:String x:Key="S.KV.NotesIntro">Bild und Notiz liegen in den Nutzerdaten und sind vom Quellordner unabhängig. Zugeordnet wird über den Dateiinhalt — Verschieben und Umbenennen ändern nichts. Doppelklick bearbeitet.</s:String>
+    <s:String x:Key="S.KV.Redistill">Erneut auswerten</s:String>
+    <s:String x:Key="S.KV.RedistillTip">Gibt alle Notizen frei, damit der nächste Lauf erneut Fakten daraus gewinnt. Vorhandene Fakten bleiben.</s:String>
+    <s:String x:Key="S.KV.RemoveAll">Alle entfernen</s:String>
+    <s:String x:Key="S.KV.RemoveAllTip">Entfernt alle Bild-Notizen. Die daraus gewonnenen Fakten bleiben erhalten.</s:String>
+    <s:String x:Key="S.KV.RemoveNote">Notiz entfernen</s:String>
+    <s:String x:Key="S.KV.NoNotes">Noch keine Notizen. Rechtsklick auf ein Bild in der Ergebnisansicht → „Notiz hinzufügen“.</s:String>
+
+    <!-- Zone dialog -->
+    <s:String x:Key="S.Zone.TitleNew">Zone anlegen</s:String>
+    <s:String x:Key="S.Zone.TitleEdit">Zone bearbeiten</s:String>
+    <s:String x:Key="S.Zone.Intro">Eine Zone benennt einen Ort für die Auswertung. Zuhause bedeutet Alltag — dort bleiben verschiedene Tätigkeiten getrennte Ereignisse. Urlaubsort und sonstige Orte zählen als unterwegs.</s:String>
+    <s:String x:Key="S.Zone.Name">Name</s:String>
+    <s:String x:Key="S.Zone.Kind">Kategorie</s:String>
+    <s:String x:Key="S.Zone.Radius">Radius (km)</s:String>
+    <s:String x:Key="S.Zone.RadiusHint">Aufnahmen innerhalb dieses Radius gehören zur Zone. 0,7 km passt für ein Wohnhaus, größere Werte für ein Ferienareal.</s:String>
+    <s:String x:Key="S.Zone.Position">Position</s:String>
+    <s:String x:Key="S.Zone.PositionHint">Aus deinen Aufnahmen gewählt trifft die Position genau den Schwerpunkt der Fotos. Alternativ Koordinaten direkt eintragen.</s:String>
+    <s:String x:Key="S.Zone.SuggestionSummary">{0} Aufnahme(n) bei {1} Gelegenheit(en) · {2}, {3}</s:String>
+    <s:String x:Key="S.Zone.NoSuggestions">Keine Ortsvorschläge verfügbar — lies zuerst einen Quellordner ein, dann stehen hier deine häufigsten Aufnahmeorte.</s:String>
+    <s:String x:Key="S.Zone.SuggestionsLabel">Oder einen deiner häufigsten Aufnahmeorte übernehmen</s:String>
+    <s:String x:Key="S.Zone.SearchingSuggestions">Suche deine häufigsten Aufnahmeorte …</s:String>
+    <s:String x:Key="S.Zone.Latitude">Breitengrad</s:String>
+    <s:String x:Key="S.Zone.Longitude">Längengrad</s:String>
+    <s:String x:Key="S.Zone.KindHome">Zuhause — Alltag, kein Ausflug</s:String>
+    <s:String x:Key="S.Zone.KindVacation">Urlaubsort — zählt als unterwegs</s:String>
+    <s:String x:Key="S.Zone.KindPlace">Sonstiger Ort — zählt als unterwegs</s:String>
+    <s:String x:Key="S.Zone.NeedName">Bitte einen Namen vergeben.</s:String>
+    <s:String x:Key="S.Zone.BadLatitude">Breitengrad muss eine Zahl zwischen -90 und 90 sein.</s:String>
+    <s:String x:Key="S.Zone.BadLongitude">Längengrad muss eine Zahl zwischen -180 und 180 sein.</s:String>
+    <s:String x:Key="S.Zone.BadRadius">Radius muss eine Zahl zwischen 0 und 200 km sein.</s:String>
+
+    <!-- Person dialog -->
+    <s:String x:Key="S.Person.Title">Person bearbeiten</s:String>
+    <s:String x:Key="S.Person.Name">Name</s:String>
+    <s:String x:Key="S.Person.Relation">Beziehung (optional)</s:String>
+    <s:String x:Key="S.Person.RelationHint">z.B. „Tochter“, „Ehefrau“, „Opa“ — fließt als Kontext in Beschreibungen und Ordnernamen ein.</s:String>
+    <s:String x:Key="S.Person.MergeLabel">Mit anderer Person zusammenführen</s:String>
+    <s:String x:Key="S.Person.MergeHint">Übernimmt alle Referenzgesichter dieser Person in die gewählte und löscht sie danach. Sinnvoll, wenn die automatische Gruppierung dieselbe Person getrennt hat.</s:String>
+    <s:String x:Key="S.Person.MergeButton">Zusammenführen</s:String>
+    <s:String x:Key="S.Person.MergeConfirm">Alle {0} Referenzgesicht(er) von "{1}" werden "{2}" zugeordnet und "{1}" entfernt.&#x0a;&#x0a;Fortfahren?</s:String>
+    <s:String x:Key="S.Person.MergeTitle">Personen zusammenführen</s:String>
+    <s:String x:Key="S.Person.FaceCount">{0} Referenzgesicht(er) gespeichert</s:String>
+
+    <!-- Face learning -->
+    <s:String x:Key="S.Learn.Title">Gesichter anlernen</s:String>
+    <s:String x:Key="S.Learn.Heading">Gesichter aus einem Ordner anlernen</s:String>
+    <s:String x:Key="S.Learn.Intro">Alle Gesichter werden gefunden und nach Person gruppiert — du vergibst je Person einmal einen Namen. Am besten vor dem Sortierlauf ausführen.</s:String>
+    <s:String x:Key="S.Learn.ChooseFolder">Ordner wählen …</s:String>
+    <s:String x:Key="S.Learn.Scan">Ordner durchsuchen</s:String>
+    <s:String x:Key="S.Learn.Close">Schließen</s:String>
+    <s:String x:Key="S.Learn.SaveNames">Namen speichern</s:String>
+    <s:String x:Key="S.Learn.PickFolder">Ordner mit Fotos wählen</s:String>
+    <s:String x:Key="S.Learn.NeedFolder">Bitte einen vorhandenen Ordner wählen.</s:String>
+    <s:String x:Key="S.Learn.Scanning">Durchsuche {0}/{1} — {2}</s:String>
+    <s:String x:Key="S.Learn.EnterName">Name eintragen — leer lassen überspringt diese Person.</s:String>
+    <s:String x:Key="S.Learn.AlreadyKnown">Bereits bekannt als {0} — wird um weitere Referenzen ergänzt.</s:String>
+    <s:String x:Key="S.Learn.NothingFound">Keine wiederkehrenden Gesichter gefunden.</s:String>
+    <s:String x:Key="S.Learn.Found">{0} Person(en) erkannt — Namen vergeben und speichern.</s:String>
+    <s:String x:Key="S.Learn.ShotCount">{0} Aufnahmen dieser Person</s:String>
+    <s:String x:Key="S.Learn.ScanFailed">Durchsuchen fehlgeschlagen: {0}</s:String>
+
+    <!-- Face assignment -->
+    <s:String x:Key="S.Assign.Title">Personen zuordnen</s:String>
+    <s:String x:Key="S.Assign.PersonName">Name der Person</s:String>
+    <s:String x:Key="S.Assign.Save">Zuordnen &amp; merken</s:String>
+    <s:String x:Key="S.Assign.Failed">Gesichtserkennung fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Assign.NoFace">Auf diesem Bild wurde kein Gesicht gefunden.</s:String>
+    <s:String x:Key="S.Assign.Unknown">Noch nicht bekannt — Name eintragen oder aus der Liste wählen.</s:String>
+    <s:String x:Key="S.Assign.Suggestion">Vorschlag: {0}</s:String>
+    <s:String x:Key="S.Assign.Similarity">Ähnlichkeit {0}</s:String>
+    <s:String x:Key="S.Assign.FoundOne">1 Gesicht gefunden. Trage den Namen ein — beim nächsten Lauf wird die Person automatisch erkannt.</s:String>
+    <s:String x:Key="S.Assign.FoundMany">{0} Gesichter gefunden. Trage die Namen ein — beim nächsten Lauf werden sie automatisch erkannt.</s:String>
+    <s:String x:Key="S.Viewer.TakenWithGps">Aufgenommen: {0}   ·   GPS {1}</s:String>
+
+    <!-- Media viewer -->
+    <s:String x:Key="S.Viewer.Title">Vorschau</s:String>
+    <s:String x:Key="S.Viewer.Previous">Vorheriges (Pfeil links)</s:String>
+    <s:String x:Key="S.Viewer.Next">Nächstes (Pfeil rechts)</s:String>
+    <s:String x:Key="S.Viewer.Play">Abspielen</s:String>
+    <s:String x:Key="S.Viewer.Pause">Pause</s:String>
+    <s:String x:Key="S.Viewer.Volume">Lautstärke</s:String>
+    <s:String x:Key="S.Viewer.Mute">Ton aus</s:String>
+    <s:String x:Key="S.Viewer.Unmute">Ton an</s:String>
+    <s:String x:Key="S.Viewer.NoCodec">Dieses Video kann Windows ohne Zusatz-Codec nicht abspielen. Installiere ffmpeg (Einstellungen), dann wird es hier direkt angezeigt.</s:String>
+    <s:String x:Key="S.Viewer.PlaybackFailed">Video kann nicht wiedergegeben werden: {0}</s:String>
+    <s:String x:Key="S.Viewer.DecodeFailed">Video konnte nicht dekodiert werden ({0}).</s:String>
+    <s:String x:Key="S.Viewer.DecodeFailedDetail">Video konnte nicht dekodiert werden ({0}): {1}</s:String>
+    <s:String x:Key="S.Viewer.PlayFailed">Wiedergabe fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Viewer.NoAudioTrack">ohne Tonspur</s:String>
+    <s:String x:Key="S.Viewer.FfmpegStartFailed">ffmpeg konnte nicht gestartet werden.</s:String>
+
+    <!-- Tile tooltips -->
+    <s:String x:Key="S.Tile.Taken">Aufgenommen: {0}</s:String>
+    <s:String x:Key="S.Tile.WillCopy">Wird kopiert.</s:String>
+    <s:String x:Key="S.Tile.WillMove">Wird verschoben.</s:String>
+    <s:String x:Key="S.Tile.NameConflict">Namenskonflikt im Ziel.</s:String>
+    <s:String x:Key="S.Tile.PlannedDuplicate">Duplikat — wird übersprungen.</s:String>
+    <s:String x:Key="S.Tile.Skipped">Übersprungen: inhaltsgleiche Datei war bereits im Ziel vorhanden.</s:String>
+    <s:String x:Key="S.Tile.Error">Fehler: {0}</s:String>
+    <s:String x:Key="S.Tile.Note">Notiz: {0}</s:String>
+    <s:String x:Key="S.Folder.New">neu</s:String>
+    <s:String x:Key="S.Folder.Exists">existiert bereits</s:String>
+    <s:String x:Key="S.Folder.FileCountOne">{0} Datei</s:String>
+    <s:String x:Key="S.Folder.FileCountMany">{0} Dateien</s:String>
+    <s:String x:Key="S.Folder.ShowMoreTiles">Weitere {0} anzeigen</s:String>
+    <s:String x:Key="S.Folder.DateRange">{0} · {1} – {2}</s:String>
+    <s:String x:Key="S.Folder.Conflicts"> · {0} Namenskonflikt(e)</s:String>
+    <s:String x:Key="S.Folder.Duplicates"> · {0} Duplikat(e)</s:String>
+    <s:String x:Key="S.Folder.SkippedDuplicates"> · {0} Duplikat(e) übersprungen</s:String>
+    <s:String x:Key="S.Folder.Errors"> · {0} Fehler</s:String>
+
+    <!-- Card: grouping -->
+    <s:String x:Key="S.Card.Grouping">Gruppierung</s:String>
+    <s:String x:Key="S.Opt.Grouping.ExifOnly">Rein EXIF (ohne LLM)</s:String>
+    <s:String x:Key="S.Opt.Grouping.Combined">Kombination (EXIF-Basis + LLM)</s:String>
+    <s:String x:Key="S.Grouping.Intro">Zusammengehörige Aufnahmen werden zeitlich und thematisch erkannt und in Ordner wie "20260701_Urlaub Sylt" einsortiert.</s:String>
+    <s:String x:Key="S.Duplicates.Toggle">Dubletten überspringen</s:String>
+    <s:String x:Key="S.Duplicates.Hint">Ist dasselbe Bild mehrfach vorhanden — etwa die WhatsApp-Fassung neben dem Original —, wird nur die beste Fassung einsortiert. Die übrigen bleiben unangetastet liegen; gelöscht wird nichts.</s:String>
+    <s:String x:Key="S.Unmatched.Toggle">Sammelordner für Unzuordenbares</s:String>
+    <s:String x:Key="S.Unmatched.Hint">Aufnahmen ohne Ereignis-Bezug (z.B. Projekt-Zwischendurchfotos) und Einzelbilder landen in EINEM Sammelordner direkt im Basisordner statt in Ereignisordnern.</s:String>
+    <s:String x:Key="S.Field.UnmatchedName">Name des Sammelordners</s:String>
+    <s:String x:Key="S.Field.MinItems">Mindestgröße für einen eigenen Ordner</s:String>
+    <s:String x:Key="S.Field.MaxEventGap">Längste Pause im selben Ereignis</s:String>
+    <s:String x:Key="S.Unit.Days">Tage</s:String>
+    <s:String x:Key="S.Hint.MaxEventGap.One">Eine Pause über einen Tag trennt zwei Besuche desselben Ortes.</s:String>
+    <s:String x:Key="S.Hint.MaxEventGap.Many">Eine Pause über {0:0.#} Tage trennt zwei Besuche desselben Ortes.</s:String>
+    <s:String x:Key="S.Field.Spatial">Räumliche Zuordnung (km)</s:String>
+    <s:String x:Key="S.Field.SpatialHint">Wie nah etwas beieinander liegen muss, um als derselbe Ort zu gelten.</s:String>
+    <s:String x:Key="S.Field.SamePlace">Derselbe Ort bis</s:String>
+    <s:String x:Key="S.Field.WholeGroups">Ganze Gruppen</s:String>
+    <s:String x:Key="S.Exif.Toggle">Beschreibung in Bilddatei speichern</s:String>
+    <s:String x:Key="S.Exif.Hint">Schreibt die erzeugte Beschreibung verlustfrei in die XMP-Daten der JPEG-Dateien — im Explorer als „Titel" und in anderen Foto-Apps sichtbar. Verändert die Originaldateien.</s:String>
+
+    <!-- Card: local model -->
+    <s:String x:Key="S.Card.Llm">Lokales LLM (Ollama)</s:String>
+    <s:String x:Key="S.Tip.RecheckConnection">Verbindung erneut prüfen</s:String>
+    <s:String x:Key="S.Field.Endpoint">Endpoint</s:String>
+    <s:String x:Key="S.Field.Model">Modell (Analyse, Gruppierung &amp; Benennung)</s:String>
+    <s:String x:Key="S.Tip.PullModel">Dieses Modell herunterladen</s:String>
+    <s:String x:Key="S.Model.Installed">✓ installiert</s:String>
+    <s:String x:Key="S.Cancel">Abbrechen</s:String>
+    <s:String x:Key="S.Model.Hint">Zur Wahl steht nur, was Bilder verarbeiten kann. Sehr kleine Varianten fehlen bewusst: Sie beschreiben echte Fotos falsch und sind dabei nicht schneller.</s:String>
+    <s:String x:Key="S.Cache.Toggle">Analyse-Cache</s:String>
+    <s:String x:Key="S.Cache.Hint">Bildbeschreibungen werden gespeichert — Wiederholungsläufe überspringen bereits analysierte Dateien.</s:String>
+    <s:String x:Key="S.Cache.Clear">Cache leeren</s:String>
+    <s:String x:Key="S.Cache.ClearTip">Verwirft alle gespeicherten Beschreibungen. Sinnvoll nach neuen Referenzgesichtern, geänderten Fakten oder korrigierten Notizen — der nächste Lauf analysiert dann alles neu.</s:String>
+    <s:String x:Key="S.Speed.Title">Tempo</s:String>
+    <s:String x:Key="S.Field.Parallel">Gleichzeitige Analysen</s:String>
+    <s:String x:Key="S.Burst.Toggle">Serienaufnahmen nur einmal analysieren</s:String>
+    <s:String x:Key="S.Burst.Hint">Aufnahmen derselben Kamera, die innerhalb weniger Sekunden am selben Ort entstanden, übernehmen die Beschreibung der ersten. Spart bei Serien viel Zeit — verlässt sich aber darauf, dass sie dasselbe zeigen.</s:String>
+
+    <!-- Card: video -->
+    <s:String x:Key="S.Card.Video">Videoanalyse (ffmpeg)</s:String>
+    <s:String x:Key="S.Card.Update">Aktualisierung</s:String>
+    <s:String x:Key="S.Card.Interface">Oberfläche</s:String>
+    <s:String x:Key="S.Tip.Recheck">Erneut prüfen</s:String>
+    <s:String x:Key="S.Ffmpeg.Install">ffmpeg installieren (winget)</s:String>
+
+    <!-- Card: knowledge and people -->
+    <s:String x:Key="S.Card.Knowledge">Wissen &amp; Personen</s:String>
+    <s:String x:Key="S.Faces.Toggle">Personen automatisch erkennen</s:String>
+    <s:String x:Key="S.Faces.Hint">Erkannte Personen werden dem Modell als Tatsache mitgegeben, statt dass es raten muss. Läuft lokal, kostet ~50 ms pro Bild.</s:String>
+    <s:String x:Key="S.Faces.Download">Erkennungsmodelle laden</s:String>
+
+    <!-- Card: about and updates -->
+    <s:String x:Key="S.Update.Toggle">Beim Start nach Aktualisierungen sehen</s:String>
+    <s:String x:Key="S.Update.Hint">Fragt einmal täglich, ob es eine neuere Fassung gibt. Lädt und installiert nie von selbst.</s:String>
+    <s:String x:Key="S.Update.CheckNow">Jetzt prüfen</s:String>
+    <s:String x:Key="S.Update.Install">Laden und installieren</s:String>
+    <s:String x:Key="S.Update.NoCheckYet">Es wurde noch nicht nach Aktualisierungen gesehen.</s:String>
+    <s:String x:Key="S.Update.LastChecked">Zuletzt geprüft: {0:g}.</s:String>
+    <s:String x:Key="S.Update.Checking">Suche nach Aktualisierungen …</s:String>
+    <s:String x:Key="S.Update.Available">Version {0} ist verfügbar.</s:String>
+    <s:String x:Key="S.Update.AvailableReleased">Version {0} ist verfügbar (erschienen {1}).</s:String>
+    <s:String x:Key="S.Update.UpToDate">Dies ist die neueste Fassung.</s:String>
+    <s:String x:Key="S.Update.CheckFailed">Suche fehlgeschlagen: {0}</s:String>
+    <s:String x:Key="S.Update.InstallTitle">Aktualisierung installieren</s:String>
+    <s:String x:Key="S.Update.InstallConfirm">Version {0} wurde geladen und geprüft.&#x0a;&#x0a;Media Organizer schließt sich jetzt, ersetzt sich selbst und startet neu. Ein laufender Vorgang geht dabei verloren.</s:String>
+    <s:String x:Key="S.Update.ReadyToInstall">Version {0} ist geladen und bereit zur Installation.</s:String>
+    <s:String x:Key="S.Update.StartFailed">Die Aktualisierung konnte nicht gestartet werden. Die entpackte Fassung liegt im Temp-Ordner unter MediaOrganizer\updates.</s:String>
+
+    <!-- Main area -->
+    <s:String x:Key="S.Current">Ist-Zustand</s:String>
+    <s:String x:Key="S.Undo">Letzten Lauf rückgängig machen</s:String>
+    <s:String x:Key="S.UndoTipIdle">Nimmt den zuletzt übernommenen Plan zurück — Dateien wandern an ihren Ursprungsort.</s:String>
+    <s:String x:Key="S.UndoTipResult">Nimmt den übernommenen Plan zurück — Dateien wandern an ihren Ursprungsort.</s:String>
+    <s:String x:Key="S.Tip.RescanSource">Ist-Zustand neu einlesen</s:String>
+    <s:String x:Key="S.Start">Sortierung starten</s:String>
+    <s:String x:Key="S.StartTip">Sortierung starten — erzeugt zunächst nur eine Vorschau, geschrieben wird nichts.</s:String>
+    <s:String x:Key="S.Ready.Title">Bereit zum Organisieren</s:String>
+    <s:String x:Key="S.Ready.Body">Wähle links Quell- und Zielordner sowie den Gruppierungsmodus. Sobald ein Quellordner gewählt ist, erscheint hier seine vorhandene Struktur. Ein Lauf erzeugt zunächst nur eine Vorschau — geschrieben wird erst auf Knopfdruck.</s:String>
+    <s:String x:Key="S.Apply">Übernehmen</s:String>
+    <s:String x:Key="S.ApplyTip">Führt den Plan aus — erst jetzt werden Dateien bewegt.</s:String>
+    <s:String x:Key="S.ApplySelected">Auswahl übernehmen ({0})</s:String>
+    <s:String x:Key="S.ApplySelectedTip">Führt nur die angehakten Ordner aus. Der Rest bleibt als Plan stehen und kann später übernommen werden.</s:String>
+    <s:String x:Key="S.DiscardTip">Plan verwerfen; es wurde nichts geschrieben.</s:String>
+    <s:String x:Key="S.CheckDuplicatesTip">Vergleicht bei jeder Namenskollision die Inhalte (SHA-256). Ohne diese Prüfung zeigt die Vorschau nur Namensgleichheit.</s:String>
+    <s:String x:Key="S.RecognizeRename">Personen erkennen &amp; neu benennen</s:String>
+    <s:String x:Key="S.RecognizeRenameTipPlan">Erkennt Personen auf den Quelldateien und berechnet die Ordnernamen im Plan neu — es wird nichts bewegt.</s:String>
+    <s:String x:Key="S.RecognizeRenameTipResult">Erkennt Personen auf den bereits einsortierten Dateien und aktualisiert die Ordnernamen — ohne Dateien zu bewegen.</s:String>
+    <s:String x:Key="S.CreateFolder">Ordner anlegen …</s:String>
+    <s:String x:Key="S.RemoveEmpty">Leere Ordner entfernen</s:String>
+    <s:String x:Key="S.Result">Ergebnis</s:String>
+    <s:String x:Key="S.NewRun">Neuer Lauf</s:String>
+    <s:String x:Key="S.Result.Hint">Doppelklick öffnet die Vorschau · Klick/Strg/Shift oder Rahmen zum Markieren · Drag &amp; Drop auf einen anderen Ordner verschiebt.</s:String>
+    <s:String x:Key="S.ShowCurrentTip">Zum Vergleich die vorhandene Struktur des Quellordners anzeigen</s:String>
+    <s:String x:Key="S.BackToPreviewTip">Wieder den geplanten Soll-Zustand anzeigen</s:String>
+    <s:String x:Key="S.SaveHomeZone">Als Heimatzone speichern …</s:String>
+    <s:String x:Key="S.Tip.DismissSuggestion">Vorschlag ausblenden</s:String>
+    <s:String x:Key="S.Warnings.Header">Hinweise ({0})</s:String>
+
+    <!-- Hinweise eines Laufs. Die Schlüssel stehen in Core/Services/RunWarnings.cs;
+         ein Test hält beide Wörterbücher dagegen. -->
+    <s:String x:Key="S.Warn.NoFfmpeg">ffmpeg wurde nicht gefunden — Videos werden ohne Bildanalyse nur anhand ihrer Metadaten eingeordnet.</s:String>
+    <s:String x:Key="S.Warn.SkippedFormats">{0} Datei(en) übersprungen, Format nicht unterstützt: {1}.</s:String>
+    <s:String x:Key="S.Warn.NoCaptureMetadata">{0} Datei(en) ohne Aufnahme-Metadaten — dort wurde der Dateisystem-Zeitstempel verwendet, und der sagt, wann kopiert wurde, nicht wann fotografiert.</s:String>
+    <s:String x:Key="S.Warn.DateFromFileName">{0} Datei(en) tragen keine Aufnahme-Metadaten, wohl aber ihr Name — das Datum stammt aus dem Dateinamen (Messenger-Bilder, Bildschirmfotos).</s:String>
+    <s:String x:Key="S.Warn.LittleGps">{0} von {1} Aufnahmen ohne GPS-Daten — die Zuhause/Unterwegs-Erkennung ist dadurch nur eingeschränkt möglich.</s:String>
+    <s:String x:Key="S.Warn.FaceModelsMissing">Gesichtserkennung ist aktiv, aber die Modelle fehlen — bitte in den Einstellungen herunterladen.</s:String>
+    <s:String x:Key="S.Warn.NoPersonsKnown">Gesichtserkennung ist aktiv, aber es sind keine Personen hinterlegt — ordne Gesichter über die Wissensverwaltung zu.</s:String>
+    <s:String x:Key="S.Warn.FaceRecognitionUnavailable">Gesichtserkennung nicht verfügbar: {0}</s:String>
+    <s:String x:Key="S.Warn.HomeZoneGuessed">Heimatzone automatisch vermutet bei {0} — bitte über das Haus-Symbol an einer Ergebnis-Gruppe oder den Vorschlag bestätigen.</s:String>
+    <s:String x:Key="S.Warn.WideHomeZone">Zone "{0}" ist als Zuhause eingetragen und reicht {1:0.#} km weit — alles darin gilt als Alltag und nie als Reise. Prüfe Art oder Radius, falls das nicht gemeint war.</s:String>
+    <s:String x:Key="S.Warn.EverydayFolders">{0} Gruppe(n) innerhalb einer Heimatzone kamen in diese datumslosen Ordner: {1}. Ohne Modell lässt sich ein Tag zuhause nicht vom nächsten unterscheiden. Eine Zone der Art "Zuhause" ist Alltag — prüfe ihre Art, falls ein Ordner hier nicht hingehört.</s:String>
+    <s:String x:Key="S.Warn.UnnamedToCollection">{0} Gruppe(n) ließen sich nicht benennen — kein GPS, und kein Modell, das man fragen könnte. Ihre {1} Aufnahme(n) liegen in "{2}".</s:String>
+    <s:String x:Key="S.Warn.SplitWithoutHierarchy">Datumslose Ordner sollen je Zeitraum geteilt werden, aber die Zielordner-Hierarchie ist flach — es gibt keine Ebene für die Teile, deshalb blieb es bei je einem Ordner.</s:String>
+    <s:String x:Key="S.Warn.NoMediaFound">Keine Fotos oder Videos im Quellordner gefunden.</s:String>
+    <s:String x:Key="S.Warn.AnalysisFailures">{0} Bildanalyse(n) fehlgeschlagen — betroffene Dateien wurden nur zeitlich einsortiert.</s:String>
+    <s:String x:Key="S.Warn.GroupingFailed">Thematische Gruppierung für {0} Aufnahmen fehlgeschlagen — diese Aufnahmen wurden nur zeitlich gruppiert.</s:String>
+    <s:String x:Key="S.Warn.TargetFolderFailed">Zielordner "{0}" nicht anlegbar: {1}</s:String>
+    <s:String x:Key="S.Warn.TransferCancelled">Übernehmen abgebrochen — bereits übertragene Dateien liegen im Zielordner. Über "Letzten Lauf rückgängig machen" lässt sich der Teil zurücknehmen.</s:String>
+    <s:String x:Key="S.Warn.TransferFailed">{0} Datei(en) konnten nicht übertragen werden (Details in der Ergebnisansicht).</s:String>
+    <s:String x:Key="S.Warn.DuplicatesSkipped">{0} Datei(en) übersprungen — im Ziel lag bereits eine inhaltsgleiche Fassung. Die Quelldateien blieben unangetastet.</s:String>
+    <s:String x:Key="S.Warn.DescriptionsWritten">Beschreibung in {0} Bilddatei(en) gespeichert (EXIF/XMP).</s:String>
+    <s:String x:Key="S.Warn.DescriptionsPartlyWritten">Beschreibung in {0} Bilddatei(en) gespeichert (EXIF/XMP). {1} Datei(en) unterstützen das nicht.</s:String>
+    <s:String x:Key="S.Warn.DescriptionsNotWritten">Beschreibung konnte in keine der {0} Bilddatei(en) geschrieben werden — unterstützt wird nur JPEG.</s:String>
+    <s:String x:Key="S.Warn.UndoCopyNotRemoved">"{0}" behalten — das Original fehlt oder unterscheidet sich.</s:String>
+    <s:String x:Key="S.Warn.UndoSourceOccupied">"{0}" nicht zurückverschoben — am Ursprungsort liegt bereits eine Datei.</s:String>
+    <s:String x:Key="S.Warn.UndoFileFailed">"{0}": {1}</s:String>
+    <s:String x:Key="S.Tip.ToggleWarnings">Hinweise ein- oder ausblenden</s:String>
+    <s:String x:Key="S.Tip.DismissWarning">Diesen Hinweis ausblenden</s:String>
+    <s:String x:Key="S.Tip.DismissAllWarnings">Alle Hinweise ausblenden</s:String>
+
+</ResourceDictionary>

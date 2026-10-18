@@ -1,0 +1,38 @@
+name: Bug report
+description: A wrong folder, a wrong name, a crash or something that does not work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Grouping mode
+      options: [EXIF only, Combined]
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: The model selected in the settings, for example gemma4:12b
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown in the settings panel, for example 1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Relevant lines from lastrun.log
+      description: >
+        The log is in %AppData%\MediaOrganizer\logs\lastrun.log. It contains
+        file paths and, in combined mode, descriptions of your pictures. Remove
+        or replace anything you do not want to publish.
+      render: text

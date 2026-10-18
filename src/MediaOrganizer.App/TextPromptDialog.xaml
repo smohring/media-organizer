@@ -1,0 +1,21 @@
+<Window x:Class="MediaOrganizer.App.TextPromptDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="420" SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+    <StackPanel Margin="20">
+        <TextBlock x:Name="HeaderText" FontSize="14" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <TextBlock x:Name="CaptionText" Style="{StaticResource Caption}" Margin="0,4,0,10" />
+        <TextBox x:Name="InputBox" TextWrapping="Wrap" AcceptsReturn="False"
+                 VerticalScrollBarVisibility="Auto" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="{DynamicResource S.Cancel}" IsCancel="True" MinWidth="90" Margin="0,0,8,0" />
+            <Button x:Name="OkButton" Content="OK" IsDefault="True" MinWidth="90"
+                    Style="{DynamicResource AccentButtonStyle}"
+                    Click="Ok_Click" />
+        </StackPanel>
+    </StackPanel>
+</Window>

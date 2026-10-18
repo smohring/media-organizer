@@ -1,0 +1,8 @@
+{
+    "version":  "1.0.0",
+    "released":  "2026-10-18",
+    "notes":  "First public release. Pre-release: tested on one machine so far.",
+    "packageUrl":  "https://github.com/smohring/media-organizer/releases/download/v1.0.0/MediaOrganizer-1.0.0-win-x64.zip",
+    "sha256":  "279c55d087f0f1e4d135a5a711fa31c15af60a5d289333281a01f9cf5ca8f76c",
+    "sizeBytes":  110529604
+}

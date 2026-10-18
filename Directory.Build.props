@@ -1,0 +1,60 @@
+<Project>
+
+  <!-- Shared identity for every project in this repository. The values below
+       end up in the Windows file properties of the produced binaries (right
+       click -> Properties -> Details), which is what the installer and the
+       updater read to tell versions apart. -->
+  <PropertyGroup>
+    <!-- Project name rather than a person's name: these values are visible in
+         the Windows file properties of every shipped binary. -->
+    <Product>Media Organizer</Product>
+    <Company>Media Organizer</Company>
+    <Authors>Media Organizer contributors</Authors>
+    <Copyright>Copyright (c) 2026 Media Organizer contributors</Copyright>
+    <PackageProjectUrl>https://github.com/smohring/media-organizer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/smohring/media-organizer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <!-- One place for the release number.
+
+       VersionPrefix feeds AssemblyVersion, FileVersion and the informational
+       version. The updater compares the informational version of the running
+       executable against the version advertised in the update feed, so this
+       property is the single source of truth for "which build am I". Raise it
+       here and nowhere else; the installer script reads it from the compiled
+       executable rather than keeping its own copy. -->
+  <PropertyGroup>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+    <FileVersion>$(VersionPrefix).0</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+
+    <!-- Reproducible builds: the same source must yield the same binary, or
+         a signature says nothing about what was signed. -->
+    <Deterministic>true</Deterministic>
+
+    <!-- The satellite languages of the framework itself are dead weight in a
+         self-contained package (roughly 10 MB of resource assemblies). -->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+
+    <!-- Nothing of the build machine may end up in a shipped binary. Rewrites
+         the repository root in whatever still embeds a path (caller file
+         paths, generated code). -->
+    <PathMap>$(MSBuildThisFileDirectory)=/src/</PathMap>
+  </PropertyGroup>
+
+  <!-- Debug symbols carry the full build path of every source file, so a
+       Release build has none. Costs the line numbers in a stack trace. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+</Project>

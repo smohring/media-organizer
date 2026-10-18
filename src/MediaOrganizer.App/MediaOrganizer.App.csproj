@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationTitle>Media Organizer</ApplicationTitle>
+    <AssemblyTitle>Media Organizer</AssemblyTitle>
+    <AssemblyName>MediaOrganizer</AssemblyName>
+    <Description>Sorts photos and videos into event folders using a local vision model.</Description>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <!-- WPF0001: the Fluent ThemeMode API is marked "evaluation", but it is the
+         intended route to Win11 Fluent. -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
+  </PropertyGroup>
+
+  <!-- The settings for the shipped build live in
+       Properties\PublishProfiles\win-x64.pubxml, not here on purpose: a
+       RuntimeIdentifier in this file would apply to every `dotnet build` as
+       well and turn each development build into a self-contained copy of the
+       whole runtime. -->
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="NAudio" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- ApplicationIcon legt das Symbol nur in die Exe. Damit Fenster es über
+         Icon="Assets/app.ico" laden können, muss es zusätzlich als Ressource
+         eingebettet sein — sonst scheitert der Aufbau des Fensters. -->
+    <Resource Include="Assets\app.ico" />
+
+    <!-- WPF zeigt dieses Bild schon vor dem ersten Fenster und blendet es aus,
+         sobald das Hauptfenster steht. Kein Code nötig. -->
+    <SplashScreen Include="Assets\splash.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MediaOrganizer.Core\MediaOrganizer.Core.csproj" />
+  </ItemGroup>
+
+</Project>

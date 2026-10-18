@@ -1,0 +1,24 @@
+<!--
+  Not a project that builds anything. Its only job is to pull signtool.exe into
+  the NuGet package cache:
+
+      dotnet restore build\signtool\signtool.csproj
+
+  build\sign.ps1 then finds it there. This is the cheap way to get the signing
+  tool: the Windows SDK installer wants roughly a gigabyte and administrator
+  rights for the same executable.
+
+  Excluded from the solution on purpose -- it must never be part of a build.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4948" />
+  </ItemGroup>
+
+</Project>
